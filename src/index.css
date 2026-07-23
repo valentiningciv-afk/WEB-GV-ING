@@ -1,0 +1,105 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* Categoria: Vigas Aéreas */
+  --color-viga-50: #eef4ff;
+  --color-viga-100: #dbe6ff;
+  --color-viga-500: #3b82f6;
+  --color-viga-600: #2563eb;
+  --color-viga-700: #1d4ed8;
+
+  /* Categoria: Losas */
+  --color-losa-50: #eefcf3;
+  --color-losa-100: #d7f8e2;
+  --color-losa-500: #22c55e;
+  --color-losa-600: #16a34a;
+  --color-losa-700: #15803d;
+
+  /* Categoria: Columnas */
+  --color-columna-50: #fff4ec;
+  --color-columna-100: #ffe4cf;
+  --color-columna-500: #f97316;
+  --color-columna-600: #ea580c;
+  --color-columna-700: #c2410c;
+
+  /* Categoria: Columnas con ménsulas */
+  --color-mensula-50: #fdf0ff;
+  --color-mensula-100: #f9dbff;
+  --color-mensula-500: #a855f7;
+  --color-mensula-600: #9333ea;
+  --color-mensula-700: #7e22ce;
+}
+
+:root {
+  color-scheme: light;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: #f2f2f7;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior-y: none;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea,
+button {
+  font-family: inherit;
+}
+
+/* Oculta el input file nativo, se maneja con label estilizado */
+.file-input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-sheet-up {
+  animation: sheet-up 0.28s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
