@@ -1,4 +1,4 @@
-/** Redimensiona y comprime una imagen a JPEG base64 para guardarla en localStorage sin ocupar demasiado espacio. */
+/** Redimensiona y comprime una imagen a JPEG base64 para no ocupar demasiado espacio al guardarla. */
 export function compressImage(
   file: File,
   maxDim = 900,

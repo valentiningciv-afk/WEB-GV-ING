@@ -4,47 +4,32 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
 import { createSeedAvances } from '../data/seedAvances';
 import { createSeedElementos } from '../data/seedElementos';
-import type { AvanceEntry, ElementoEstructural, Proyecto } from '../types';
+import { supabase } from '../lib/supabase';
+import {
+  avanceFromRow,
+  avanceToRow,
+  elementoFromRow,
+  elementoToRow,
+  type AvanceRow,
+  type ElementoRow,
+} from '../lib/mappers';
+import type { AvanceEntry, ElementoEstructural } from '../types';
 
-const STORAGE_KEY = 'epet24-hormigon-v1';
-const BASELINE_AVANCES_FLAG = 'epet24-baseline-avances-v1';
-
-function loadInitial(): Proyecto {
-  let data: Proyecto;
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    data = raw ? (JSON.parse(raw) as Proyecto) : { elementos: createSeedElementos(), avances: [] };
-  } catch {
-    // localStorage corrupto o inaccesible: se arranca con el cómputo base
-    data = { elementos: createSeedElementos(), avances: [] };
-  }
-
-  // Avance acumulado informado al arrancar el uso de la app: se aplica una
-  // sola vez por dispositivo, sea la primera vez que se abre o si ya venía
-  // usándose sin este dato cargado todavía.
-  try {
-    if (!localStorage.getItem(BASELINE_AVANCES_FLAG)) {
-      const baseline = createSeedAvances(data.elementos);
-      if (baseline.length > 0) {
-        data = { ...data, avances: [...data.avances, ...baseline] };
-      }
-      localStorage.setItem(BASELINE_AVANCES_FLAG, '1');
-    }
-  } catch {
-    // si no se puede marcar el flag, seguimos sin el baseline antes que duplicarlo
-  }
-
-  return data;
+function uid(): string {
+  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
 }
 
 interface ProjectContextValue {
   elementos: ElementoEstructural[];
   avances: AvanceEntry[];
+  loading: boolean;
+  syncError: string | null;
   addElemento: (e: Omit<ElementoEstructural, 'id' | 'creadoEn'>) => string;
   updateElemento: (
     id: string,
@@ -59,96 +44,202 @@ interface ProjectContextValue {
 
 const ProjectContext = createContext<ProjectContextValue | null>(null);
 
-function uid(): string {
-  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-}
-
 export function ProjectProvider({ children }: { children: ReactNode }) {
-  const [data, setData] = useState<Proyecto>(loadInitial);
+  const [elementos, setElementos] = useState<ElementoEstructural[]>([]);
+  const [avances, setAvances] = useState<AvanceEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [syncError, setSyncError] = useState<string | null>(null);
+  const avancesRef = useRef(avances);
+  avancesRef.current = avances;
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    } catch {
-      // cuota de almacenamiento excedida: se ignora, los datos siguen en memoria
-    }
-  }, [data]);
+    let cancelled = false;
 
-  const addElemento = useCallback(
-    (e: Omit<ElementoEstructural, 'id' | 'creadoEn'>) => {
-      const id = uid();
-      setData((prev) => ({
-        ...prev,
-        elementos: [
-          ...prev.elementos,
-          { ...e, id, creadoEn: new Date().toISOString() },
-        ],
-      }));
-      return id;
-    },
-    [],
-  );
+    async function bootstrap() {
+      const [elementosRes, avancesRes] = await Promise.all([
+        supabase.from('elementos').select('*'),
+        supabase.from('avances').select('*'),
+      ]);
+
+      if (cancelled) return;
+
+      if (elementosRes.error || avancesRes.error) {
+        setSyncError(
+          (elementosRes.error ?? avancesRes.error)?.message ??
+            'No se pudo conectar con la base de datos compartida.',
+        );
+        setLoading(false);
+        return;
+      }
+
+      let elementosData = (elementosRes.data as ElementoRow[]).map(elementoFromRow);
+      let avancesData = (avancesRes.data as AvanceRow[]).map(avanceFromRow);
+
+      if (elementosData.length === 0) {
+        const seedElementos = createSeedElementos();
+        const seedAvances = createSeedAvances(seedElementos);
+        const { error: insertElError } = await supabase
+          .from('elementos')
+          .insert(seedElementos.map(elementoToRow));
+        if (!insertElError && seedAvances.length > 0) {
+          await supabase.from('avances').insert(seedAvances.map(avanceToRow));
+        }
+        if (!insertElError) {
+          elementosData = seedElementos;
+          avancesData = seedAvances;
+        }
+      }
+
+      if (cancelled) return;
+      setElementos(elementosData);
+      setAvances(avancesData);
+      setLoading(false);
+    }
+
+    bootstrap();
+
+    const channel = supabase
+      .channel('epet24-db-changes')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'elementos' },
+        (payload) => {
+          if (payload.eventType === 'DELETE') {
+            const oldId = (payload.old as Partial<ElementoRow>).id;
+            setElementos((prev) => prev.filter((e) => e.id !== oldId));
+            return;
+          }
+          const elemento = elementoFromRow(payload.new as ElementoRow);
+          setElementos((prev) => {
+            const idx = prev.findIndex((e) => e.id === elemento.id);
+            if (idx === -1) return [...prev, elemento];
+            const next = [...prev];
+            next[idx] = elemento;
+            return next;
+          });
+        },
+      )
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'avances' },
+        (payload) => {
+          if (payload.eventType === 'DELETE') {
+            const oldId = (payload.old as Partial<AvanceRow>).id;
+            setAvances((prev) => prev.filter((a) => a.id !== oldId));
+            return;
+          }
+          const avance = avanceFromRow(payload.new as AvanceRow);
+          setAvances((prev) => {
+            const idx = prev.findIndex((a) => a.id === avance.id);
+            if (idx === -1) return [...prev, avance];
+            const next = [...prev];
+            next[idx] = avance;
+            return next;
+          });
+        },
+      )
+      .subscribe();
+
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, []);
+
+  const addElemento = useCallback((e: Omit<ElementoEstructural, 'id' | 'creadoEn'>) => {
+    const nuevo: ElementoEstructural = { ...e, id: uid(), creadoEn: new Date().toISOString() };
+    setElementos((prev) => [...prev, nuevo]);
+    supabase
+      .from('elementos')
+      .insert(elementoToRow(nuevo))
+      .then(({ error }) => {
+        if (error) {
+          setSyncError(error.message);
+          setElementos((prev) => prev.filter((el) => el.id !== nuevo.id));
+        } else {
+          setSyncError(null);
+        }
+      });
+    return nuevo.id;
+  }, []);
 
   const updateElemento = useCallback(
     (id: string, e: Omit<ElementoEstructural, 'id' | 'creadoEn'>) => {
-      setData((prev) => ({
-        ...prev,
-        elementos: prev.elementos.map((el) =>
-          el.id === id ? { ...el, ...e } : el,
-        ),
-      }));
+      setElementos((prev) => prev.map((el) => (el.id === id ? { ...el, ...e } : el)));
+      const actualizado = elementos.find((el) => el.id === id);
+      const creadoEn = actualizado?.creadoEn ?? new Date().toISOString();
+      supabase
+        .from('elementos')
+        .update(elementoToRow({ ...e, id, creadoEn }))
+        .eq('id', id)
+        .then(({ error }) => setSyncError(error ? error.message : null));
     },
-    [],
+    [elementos],
   );
 
   const deleteElemento = useCallback((id: string) => {
-    setData((prev) => ({
-      elementos: prev.elementos.filter((el) => el.id !== id),
-      avances: prev.avances.filter((a) => a.elementoId !== id),
-    }));
+    setElementos((prev) => prev.filter((el) => el.id !== id));
+    setAvances((prev) => prev.filter((a) => a.elementoId !== id));
+    supabase
+      .from('elementos')
+      .delete()
+      .eq('id', id)
+      .then(({ error }) => setSyncError(error ? error.message : null));
   }, []);
 
   const addAvance = useCallback((a: Omit<AvanceEntry, 'id' | 'creadoEn'>) => {
-    setData((prev) => ({
-      ...prev,
-      avances: [
-        ...prev.avances,
-        { ...a, id: uid(), creadoEn: new Date().toISOString() },
-      ],
-    }));
+    const nuevo: AvanceEntry = { ...a, id: uid(), creadoEn: new Date().toISOString() };
+    setAvances((prev) => [...prev, nuevo]);
+    supabase
+      .from('avances')
+      .insert(avanceToRow(nuevo))
+      .then(({ error }) => {
+        if (error) {
+          setSyncError(error.message);
+          setAvances((prev) => prev.filter((av) => av.id !== nuevo.id));
+        } else {
+          setSyncError(null);
+        }
+      });
   }, []);
 
   const updateAvance = useCallback(
     (id: string, a: Omit<AvanceEntry, 'id' | 'creadoEn'>) => {
-      setData((prev) => ({
-        ...prev,
-        avances: prev.avances.map((av) =>
-          av.id === id ? { ...av, ...a } : av,
-        ),
-      }));
+      const actual = avancesRef.current.find((av) => av.id === id);
+      const creadoEn = actual?.creadoEn ?? new Date().toISOString();
+      setAvances((prev) => prev.map((av) => (av.id === id ? { ...av, ...a } : av)));
+      supabase
+        .from('avances')
+        .update(avanceToRow({ ...a, id, creadoEn }))
+        .eq('id', id)
+        .then(({ error }) => setSyncError(error ? error.message : null));
     },
     [],
   );
 
   const deleteAvance = useCallback((id: string) => {
-    setData((prev) => ({
-      ...prev,
-      avances: prev.avances.filter((a) => a.id !== id),
-    }));
+    setAvances((prev) => prev.filter((a) => a.id !== id));
+    supabase
+      .from('avances')
+      .delete()
+      .eq('id', id)
+      .then(({ error }) => setSyncError(error ? error.message : null));
   }, []);
 
   const ejecutadoDe = useCallback(
     (elementoId: string) =>
-      data.avances
+      avances
         .filter((a) => a.elementoId === elementoId)
         .reduce((sum, a) => sum + a.cantidad, 0),
-    [data.avances],
+    [avances],
   );
 
   const value = useMemo<ProjectContextValue>(
     () => ({
-      elementos: data.elementos,
-      avances: data.avances,
+      elementos,
+      avances,
+      loading,
+      syncError,
       addElemento,
       updateElemento,
       deleteElemento,
@@ -158,7 +249,10 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       ejecutadoDe,
     }),
     [
-      data,
+      elementos,
+      avances,
+      loading,
+      syncError,
       addElemento,
       updateElemento,
       deleteElemento,
@@ -169,11 +263,7 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
     ],
   );
 
-  return (
-    <ProjectContext.Provider value={value}>
-      {children}
-    </ProjectContext.Provider>
-  );
+  return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
 }
 
 export function useProject(): ProjectContextValue {

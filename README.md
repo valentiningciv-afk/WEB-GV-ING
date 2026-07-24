@@ -9,11 +9,19 @@ Aplicación web para organizar y controlar el avance de estructura de hormigón 
 - Acumulado automático por elemento y por categoría, con porcentaje de avance a la fecha.
 - Panel general con el resumen del proyecto (tipo "anillos" de actividad) para que todo el equipo sepa cuánto falta.
 
+- Todo el equipo ve el mismo avance actualizado en tiempo real, desde cualquier celular.
+
 ## Stack
 
 - React + TypeScript + Vite
 - Tailwind CSS (diseño estilo iOS/Apple, navegación inferior por solapas)
-- Persistencia local en el navegador (localStorage) — sin backend
+- Supabase (Postgres + tiempo real) como base de datos compartida
+
+## Base de datos (Supabase)
+
+El esquema vive en [`supabase/schema.sql`](supabase/schema.sql). Para configurar un proyecto Supabase nuevo, pegar y ejecutar ese archivo completo en **SQL Editor** del panel de Supabase. Es seguro volver a correrlo (usa `if not exists`).
+
+La URL del proyecto y la clave pública ("publishable key") están en `src/lib/supabase.ts`. Esa clave está pensada para vivir en el cliente — el control de acceso real lo hacen las políticas de Row Level Security definidas en el esquema, no el secreto de la clave.
 
 ## Desarrollo
 
