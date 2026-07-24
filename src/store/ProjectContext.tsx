@@ -7,20 +7,39 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { createSeedAvances } from '../data/seedAvances';
 import { createSeedElementos } from '../data/seedElementos';
 import type { AvanceEntry, ElementoEstructural, Proyecto } from '../types';
 
 const STORAGE_KEY = 'epet24-hormigon-v1';
+const BASELINE_AVANCES_FLAG = 'epet24-baseline-avances-v1';
 
 function loadInitial(): Proyecto {
+  let data: Proyecto;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw) as Proyecto;
+    data = raw ? (JSON.parse(raw) as Proyecto) : { elementos: createSeedElementos(), avances: [] };
   } catch {
     // localStorage corrupto o inaccesible: se arranca con el cómputo base
+    data = { elementos: createSeedElementos(), avances: [] };
   }
-  // Primer uso en este dispositivo: se precarga el cómputo total del proyecto.
-  return { elementos: createSeedElementos(), avances: [] };
+
+  // Avance acumulado informado al arrancar el uso de la app: se aplica una
+  // sola vez por dispositivo, sea la primera vez que se abre o si ya venía
+  // usándose sin este dato cargado todavía.
+  try {
+    if (!localStorage.getItem(BASELINE_AVANCES_FLAG)) {
+      const baseline = createSeedAvances(data.elementos);
+      if (baseline.length > 0) {
+        data = { ...data, avances: [...data.avances, ...baseline] };
+      }
+      localStorage.setItem(BASELINE_AVANCES_FLAG, '1');
+    }
+  } catch {
+    // si no se puede marcar el flag, seguimos sin el baseline antes que duplicarlo
+  }
+
+  return data;
 }
 
 interface ProjectContextValue {
