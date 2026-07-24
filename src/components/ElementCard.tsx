@@ -1,6 +1,6 @@
 import type { ElementoEstructural } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatNumber } from '../utils/format';
+import { formatNumber, unitLabel } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
 import { ProgressBar } from './ui/ProgressBar';
 
@@ -32,13 +32,14 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
             </span>
           )}
         </div>
-        <p className="text-[12.5px] text-[#8e8e93] mb-1.5">
+        <p className="text-[12.5px] text-[#8e8e93] mb-1.5 truncate">
+          {elemento.nombrePliego && <>Pliego: {elemento.nombrePliego} · </>}
           {formatNumber(elemento.altura)} m · {formatNumber(elemento.volumen)} m³/u
         </p>
         <div className="flex items-center gap-2">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
           <span className="text-[12px] font-medium text-[#6e6e73] shrink-0 tabular-nums">
-            {ejecutado}/{elemento.cantidad}
+            {formatNumber(ejecutado)}/{formatNumber(elemento.cantidad)} {unitLabel(elemento.unidadMedida)}
           </span>
         </div>
       </div>

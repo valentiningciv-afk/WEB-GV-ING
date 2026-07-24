@@ -1,4 +1,4 @@
-import { Box, Layers, RectangleHorizontal, Milestone } from 'lucide-react';
+import { Box, Layers, RectangleHorizontal, Milestone, BrickWall } from 'lucide-react';
 import type { Categoria } from '../types';
 
 export interface CategoryStyle {
@@ -52,5 +52,15 @@ export const CATEGORY_STYLES: Record<Categoria, CategoryStyle> = {
     ring: 'text-mensula-500',
     chip: 'bg-mensula-100 text-mensula-700',
     icon: Milestone,
+  },
+  antepecho: {
+    bg50: 'bg-antepecho-50',
+    bg100: 'bg-antepecho-100',
+    text600: 'text-antepecho-600',
+    text700: 'text-antepecho-700',
+    bar: 'bg-antepecho-500',
+    ring: 'text-antepecho-500',
+    chip: 'bg-antepecho-100 text-antepecho-700',
+    icon: BrickWall,
   },
 };

@@ -32,6 +32,13 @@
   --color-mensula-500: #a855f7;
   --color-mensula-600: #9333ea;
   --color-mensula-700: #7e22ce;
+
+  /* Categoria: Antepechos */
+  --color-antepecho-50: #ecfeff;
+  --color-antepecho-100: #cffafe;
+  --color-antepecho-500: #06b6d4;
+  --color-antepecho-600: #0891b2;
+  --color-antepecho-700: #0e7490;
 }
 
 :root {

@@ -4,7 +4,7 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
 import { getCategoriaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNumber } from '../utils/format';
+import { formatDate, formatNumber, formatQty } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
 import { ProgressBar } from './ui/ProgressBar';
 import { Sheet } from './ui/Sheet';
@@ -32,17 +32,22 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
     <Sheet open={!!elemento} onClose={onClose} title={elemento.nombre}>
       <PhotoThumb src={elemento.foto} sizeClass="w-full h-44 rounded-2xl" />
 
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 flex items-center gap-2 flex-wrap">
         <span className={`text-[12px] font-semibold px-2.5 py-1 rounded-full ${style.chip}`}>
           {cat.nombre}
         </span>
+        {elemento.nombrePliego && (
+          <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-black/[0.06] text-[#3a3a3c]">
+            Pliego: {elemento.nombrePliego}
+          </span>
+        )}
       </div>
 
       <div className="mt-4 bg-white rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
           <p className="text-[13px] font-medium text-[#6e6e73]">Avance acumulado</p>
           <p className="text-[15px] font-bold text-[#1c1c1e] tabular-nums">
-            {ejecutado}/{elemento.cantidad}
+            {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
             <span className="text-[#8e8e93] font-normal"> · {formatNumber(percent)}%</span>
           </p>
         </div>
@@ -83,7 +88,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
               <div key={a.id} className="px-3.5 py-2.5 flex items-center justify-between gap-2">
                 <div>
                   <p className="text-[14px] font-medium text-[#1c1c1e]">
-                    +{a.cantidad} unidad{a.cantidad === 1 ? '' : 'es'}
+                    +{formatQty(a.cantidad, elemento.unidadMedida)}
                   </p>
                   {a.observaciones && (
                     <p className="text-[12.5px] text-[#8e8e93]">{a.observaciones}</p>

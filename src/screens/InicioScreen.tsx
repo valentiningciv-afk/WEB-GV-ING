@@ -5,7 +5,7 @@ import { Header } from '../components/Header';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressRing } from '../components/ui/ProgressRing';
 import { useProject } from '../store/ProjectContext';
-import { CATEGORIAS } from '../types';
+import { CATEGORIAS, UNIDAD_LABELS, type UnidadMedida } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatNumber } from '../utils/format';
 
@@ -13,30 +13,50 @@ interface InicioScreenProps {
   onNavigate: (tab: Tab) => void;
 }
 
+interface UnitTotals {
+  total: number;
+  ejecutado: number;
+}
+
+function mergeUnitTotals(map: Map<UnidadMedida, UnitTotals>, unidad: UnidadMedida, total: number, ejecutado: number) {
+  const prev = map.get(unidad) ?? { total: 0, ejecutado: 0 };
+  map.set(unidad, { total: prev.total + total, ejecutado: prev.ejecutado + ejecutado });
+}
+
 export function InicioScreen({ onNavigate }: InicioScreenProps) {
   const { elementos, avances, ejecutadoDe } = useProject();
 
   const resumen = useMemo(() => {
-    const totalUnidades = elementos.reduce((s, e) => s + e.cantidad, 0);
-    const totalEjecutado = elementos.reduce((s, e) => s + ejecutadoDe(e.id), 0);
-    const volumenTotal = elementos.reduce((s, e) => s + e.volumen * e.cantidad, 0);
-    const volumenEjecutado = elementos.reduce((s, e) => s + e.volumen * ejecutadoDe(e.id), 0);
+    const porUnidad = new Map<UnidadMedida, UnitTotals>();
+    let sumaPorcentajes = 0;
+
+    for (const e of elementos) {
+      const ejecutado = ejecutadoDe(e.id);
+      mergeUnitTotals(porUnidad, e.unidadMedida, e.cantidad, ejecutado);
+      sumaPorcentajes += e.cantidad > 0 ? Math.min(1, ejecutado / e.cantidad) : 0;
+    }
+    const percentGlobal = elementos.length > 0 ? (sumaPorcentajes / elementos.length) * 100 : 0;
+
     const porCategoria = CATEGORIAS.map((cat) => {
       const items = elementos.filter((e) => e.categoria === cat.id);
-      const total = items.reduce((s, e) => s + e.cantidad, 0);
-      const ejecutado = items.reduce((s, e) => s + ejecutadoDe(e.id), 0);
-      return { cat, total, ejecutado, items: items.length };
+      const catPorUnidad = new Map<UnidadMedida, UnitTotals>();
+      let sumaPct = 0;
+      for (const e of items) {
+        const ejecutado = ejecutadoDe(e.id);
+        mergeUnitTotals(catPorUnidad, e.unidadMedida, e.cantidad, ejecutado);
+        sumaPct += e.cantidad > 0 ? Math.min(1, ejecutado / e.cantidad) : 0;
+      }
+      const percent = items.length > 0 ? (sumaPct / items.length) * 100 : 0;
+      return { cat, percent, porUnidad: catPorUnidad, items: items.length };
     }).filter((c) => c.items > 0);
-    return { totalUnidades, totalEjecutado, volumenTotal, volumenEjecutado, porCategoria };
+
+    return { porUnidad, percentGlobal, porCategoria };
   }, [elementos, ejecutadoDe]);
 
   const ultimoAvance = useMemo(
     () => [...avances].sort((a, b) => b.fecha.localeCompare(a.fecha))[0],
     [avances],
   );
-
-  const percentGlobal =
-    resumen.totalUnidades > 0 ? (resumen.totalEjecutado / resumen.totalUnidades) * 100 : 0;
 
   if (elementos.length === 0) {
     return (
@@ -65,22 +85,24 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
 
       <div className="px-5 py-4">
         <div className="bg-white rounded-3xl p-5 flex items-center gap-5">
-          <ProgressRing percent={percentGlobal} size={104} strokeWidth={11} colorClass="text-[#007AFF]">
+          <ProgressRing percent={resumen.percentGlobal} size={104} strokeWidth={11} colorClass="text-[#007AFF]">
             <div className="text-center">
               <p className="text-[20px] font-bold text-[#1c1c1e] leading-none">
-                {formatNumber(percentGlobal)}%
+                {formatNumber(resumen.percentGlobal)}%
               </p>
             </div>
           </ProgressRing>
           <div className="flex-1">
-            <p className="text-[13px] text-[#8e8e93]">Avance general del proyecto</p>
-            <p className="text-[22px] font-bold text-[#1c1c1e] tabular-nums">
-              {resumen.totalEjecutado}
-              <span className="text-[#8e8e93] font-medium text-[16px]"> / {resumen.totalUnidades} u.</span>
-            </p>
-            <p className="text-[12.5px] text-[#8e8e93] mt-1">
-              {formatNumber(resumen.volumenEjecutado)} / {formatNumber(resumen.volumenTotal)} m³ de hormigón
-            </p>
+            <p className="text-[13px] text-[#8e8e93] mb-1">Avance general del proyecto</p>
+            {[...resumen.porUnidad.entries()].map(([unidad, { total, ejecutado }]) => (
+              <p key={unidad} className="text-[18px] font-bold text-[#1c1c1e] tabular-nums leading-snug">
+                {formatNumber(ejecutado)}
+                <span className="text-[#8e8e93] font-medium text-[14px]">
+                  {' '}
+                  / {formatNumber(total)} {UNIDAD_LABELS[unidad].corta}
+                </span>
+              </p>
+            ))}
           </div>
         </div>
 
@@ -96,9 +118,8 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
           Por categoría
         </p>
         <div className="grid grid-cols-2 gap-3">
-          {resumen.porCategoria.map(({ cat, total, ejecutado, items }) => {
+          {resumen.porCategoria.map(({ cat, percent, porUnidad, items }) => {
             const style = CATEGORY_STYLES[cat.id];
-            const percent = total > 0 ? (ejecutado / total) * 100 : 0;
             const Icon = style.icon;
             return (
               <button
@@ -113,7 +134,12 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
                   {cat.nombre}
                 </p>
                 <p className="text-[12px] text-[#8e8e93] tabular-nums mt-0.5">
-                  {ejecutado}/{total} · {items} tipo{items === 1 ? '' : 's'}
+                  {[...porUnidad.entries()]
+                    .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
+                    .join(' · ')}
+                </p>
+                <p className="text-[11px] text-[#c7c7cc] mt-0.5">
+                  {items} tipo{items === 1 ? '' : 's'}
                 </p>
               </button>
             );

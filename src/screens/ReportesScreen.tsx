@@ -4,9 +4,9 @@ import { Header } from '../components/Header';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { useProject } from '../store/ProjectContext';
-import { CATEGORIAS, getCategoriaInfo, type Categoria } from '../types';
+import { CATEGORIAS, getCategoriaInfo, UNIDAD_LABELS, type Categoria, type UnidadMedida } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNumber } from '../utils/format';
+import { formatDate, formatNumber, formatQty } from '../utils/format';
 
 type Filter = 'todas' | Categoria;
 
@@ -87,7 +87,7 @@ export function ReportesScreen() {
                 <div className="flex items-center gap-2">
                   <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
                   <span className="text-[11.5px] text-[#8e8e93] tabular-nums shrink-0">
-                    {ejecutado}/{e.cantidad}
+                    {formatQty(ejecutado, e.unidadMedida)}/{formatQty(e.cantidad, e.unidadMedida)}
                   </span>
                 </div>
               </div>
@@ -105,13 +105,23 @@ export function ReportesScreen() {
         ) : (
           <div className="space-y-3">
             {grupos.map(([fecha, entradas]) => {
-              const totalUnidades = entradas.reduce((s, e) => s + e.cantidad, 0);
+              const totalesPorUnidad = new Map<UnidadMedida, number>();
+              for (const a of entradas) {
+                const el = elementoById.get(a.elementoId);
+                if (!el) continue;
+                totalesPorUnidad.set(
+                  el.unidadMedida,
+                  (totalesPorUnidad.get(el.unidadMedida) ?? 0) + a.cantidad,
+                );
+              }
               return (
                 <div key={fecha} className="bg-white rounded-2xl overflow-hidden">
-                  <div className="px-3.5 py-2.5 bg-black/[0.03] flex items-center justify-between">
+                  <div className="px-3.5 py-2.5 bg-black/[0.03] flex items-center justify-between gap-2">
                     <p className="text-[13px] font-semibold text-[#1c1c1e]">{formatDate(fecha)}</p>
                     <p className="text-[12px] text-[#8e8e93] tabular-nums">
-                      +{totalUnidades} unidad{totalUnidades === 1 ? '' : 'es'}
+                      {[...totalesPorUnidad.entries()]
+                        .map(([u, total]) => `+${formatNumber(total)} ${UNIDAD_LABELS[u].corta}`)
+                        .join(' · ')}
                     </p>
                   </div>
                   <div className="divide-y divide-black/[0.05]">
@@ -129,7 +139,7 @@ export function ReportesScreen() {
                             )}
                           </p>
                           <span className="text-[13px] font-semibold text-[#1c1c1e] tabular-nums shrink-0">
-                            +{a.cantidad}
+                            +{formatQty(a.cantidad, el.unidadMedida)}
                           </span>
                         </div>
                       );

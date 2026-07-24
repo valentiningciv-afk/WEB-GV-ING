@@ -1,10 +1,22 @@
-export type Categoria = 'viga_aerea' | 'losa' | 'columna' | 'columna_mensula';
+export type Categoria =
+  | 'viga_aerea'
+  | 'losa'
+  | 'columna'
+  | 'columna_mensula'
+  | 'antepecho';
+
+export type UnidadMedida = 'u' | 'm2';
+
+export const UNIDAD_LABELS: Record<UnidadMedida, { corta: string; larga: string }> = {
+  u: { corta: 'u.', larga: 'unidades' },
+  m2: { corta: 'm²', larga: 'm²' },
+};
 
 export interface CategoriaInfo {
   id: Categoria;
   nombre: string;
   nombreSingular: string;
-  color: 'viga' | 'losa' | 'columna' | 'mensula';
+  color: 'viga' | 'losa' | 'columna' | 'mensula' | 'antepecho';
   descripcion: string;
 }
 
@@ -37,6 +49,13 @@ export const CATEGORIAS: CategoriaInfo[] = [
     color: 'mensula',
     descripcion: 'Columnas con apoyo tipo ménsula',
   },
+  {
+    id: 'antepecho',
+    nombre: 'Antepechos',
+    nombreSingular: 'Antepecho',
+    color: 'antepecho',
+    descripcion: 'Antepechos perimetrales',
+  },
 ];
 
 export function getCategoriaInfo(id: Categoria): CategoriaInfo {
@@ -46,8 +65,11 @@ export function getCategoriaInfo(id: Categoria): CategoriaInfo {
 export interface ElementoEstructural {
   id: string;
   nombre: string;
+  /** Cómo lo llama el pliego de licitación (puede agrupar varios nombres internos, ej: "Viga carga") */
+  nombrePliego: string;
   categoria: Categoria;
   cantidad: number;
+  unidadMedida: UnidadMedida;
   foto: string | null;
   volumen: number;
   altura: number;

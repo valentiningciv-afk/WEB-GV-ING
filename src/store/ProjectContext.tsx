@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
+import { createSeedElementos } from '../data/seedElementos';
 import type { AvanceEntry, ElementoEstructural, Proyecto } from '../types';
 
 const STORAGE_KEY = 'epet24-hormigon-v1';
@@ -16,9 +17,10 @@ function loadInitial(): Proyecto {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as Proyecto;
   } catch {
-    // localStorage corrupto o inaccesible: se arranca de cero
+    // localStorage corrupto o inaccesible: se arranca con el cómputo base
   }
-  return { elementos: [], avances: [] };
+  // Primer uso en este dispositivo: se precarga el cómputo total del proyecto.
+  return { elementos: createSeedElementos(), avances: [] };
 }
 
 interface ProjectContextValue {

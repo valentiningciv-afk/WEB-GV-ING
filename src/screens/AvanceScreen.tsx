@@ -9,7 +9,7 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
 import { getCategoriaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate } from '../utils/format';
+import { formatDate, formatQty } from '../utils/format';
 
 export function AvanceScreen() {
   const { elementos, avances, ejecutadoDe, deleteAvance } = useProject();
@@ -103,7 +103,7 @@ export function AvanceScreen() {
                         {el.nombre} <span className="text-[#8e8e93] font-normal">· {cat.nombreSingular}</span>
                       </p>
                       <p className="text-[12.5px] text-[#8e8e93]">
-                        +{a.cantidad} unidad{a.cantidad === 1 ? '' : 'es'} · {formatDate(a.fecha)}
+                        +{formatQty(a.cantidad, el.unidadMedida)} · {formatDate(a.fecha)}
                         {a.observaciones ? ` · ${a.observaciones}` : ''}
                       </p>
                     </div>
@@ -149,7 +149,7 @@ function SelectableRow({
         <div className="flex items-center gap-2 mt-1">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
           <span className="text-[12px] font-medium text-[#6e6e73] shrink-0 tabular-nums">
-            {ejecutado}/{elemento.cantidad}
+            {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
           </span>
         </div>
       </div>

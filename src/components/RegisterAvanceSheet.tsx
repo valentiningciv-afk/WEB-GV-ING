@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { todayISO } from '../utils/format';
+import { formatQty, todayISO } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
 import { Field, inputClass } from './ui/Field';
 import { ProgressBar } from './ui/ProgressBar';
@@ -32,8 +32,9 @@ function Inner({
   addAvance: (a: { elementoId: string; cantidad: number; fecha: string; observaciones: string }) => void;
   ejecutado: number;
 }) {
+  const esUnidad = elemento.unidadMedida === 'u';
   const restante = Math.max(0, elemento.cantidad - ejecutado);
-  const [cantidad, setCantidad] = useState(Math.min(1, restante) || 1);
+  const [cantidad, setCantidad] = useState(esUnidad ? Math.min(1, restante) || 1 : restante || elemento.cantidad);
   const [fecha, setFecha] = useState(todayISO());
   const [observaciones, setObservaciones] = useState('');
   const style = CATEGORY_STYLES[elemento.categoria];
@@ -64,7 +65,7 @@ function Inner({
         <div className="flex-1 min-w-0">
           <p className="text-[15px] font-semibold text-[#1c1c1e] truncate">{elemento.nombre}</p>
           <p className="text-[12.5px] text-[#8e8e93] mb-1">
-            {ejecutado}/{elemento.cantidad} hecho
+            {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)} hecho
           </p>
           <ProgressBar
             percent={(ejecutado / elemento.cantidad) * 100}
@@ -80,14 +81,37 @@ function Inner({
         </p>
       ) : (
         <p className="text-[13px] text-[#8e8e93] px-1 mb-4">
-          Quedan <strong className="text-[#1c1c1e]">{restante}</strong> unidad{restante === 1 ? '' : 'es'} por hormigonar.
+          Quedan <strong className="text-[#1c1c1e]">{formatQty(restante, elemento.unidadMedida)}</strong> por hormigonar.
         </p>
       )}
 
-      <Field label="Cantidad hormigonada">
-        <div className="bg-white rounded-xl ring-1 ring-black/[0.06] px-3.5 py-2.5 flex justify-center">
-          <Stepper value={cantidad} onChange={setCantidad} min={1} max={restante || undefined} />
-        </div>
+      <Field label={esUnidad ? 'Cantidad hormigonada' : 'Superficie hormigonada (m²)'}>
+        {esUnidad ? (
+          <div className="bg-white rounded-xl ring-1 ring-black/[0.06] px-3.5 py-2.5 flex justify-center">
+            <Stepper value={cantidad} onChange={setCantidad} min={1} max={restante || undefined} />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <input
+              className={inputClass}
+              type="number"
+              inputMode="decimal"
+              step="0.01"
+              min="0"
+              value={cantidad}
+              onChange={(e) => setCantidad(Number(e.target.value))}
+            />
+            {restante > 0 && (
+              <button
+                type="button"
+                onClick={() => setCantidad(restante)}
+                className="shrink-0 px-3 py-3 rounded-xl bg-black/[0.06] text-[13px] font-semibold text-[#1c1c1e] active:bg-black/[0.1]"
+              >
+                Todo ({formatQty(restante, elemento.unidadMedida)})
+              </button>
+            )}
+          </div>
+        )}
       </Field>
 
       <Field label="Fecha">
