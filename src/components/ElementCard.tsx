@@ -18,27 +18,27 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white rounded-2xl p-3 flex gap-3 items-center text-left active:bg-black/[0.02] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+      className="w-full bg-surface rounded-2xl p-3 flex gap-3 items-center text-left active:bg-surface-2"
     >
       <PhotoThumb src={elemento.foto} sizeClass="w-16 h-16" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[15px] font-semibold text-[#1c1c1e] truncate">
+          <p className="text-[15px] font-semibold text-ink truncate">
             {elemento.nombre}
           </p>
           {completo && (
-            <span className="text-[10px] font-bold text-losa-700 bg-losa-100 px-2 py-0.5 rounded-full shrink-0">
+            <span className="text-[10px] font-bold text-losa bg-losa/15 px-2 py-0.5 rounded-full shrink-0">
               COMPLETO
             </span>
           )}
         </div>
-        <p className="text-[12.5px] text-[#8e8e93] mb-1.5 truncate">
+        <p className="text-[12.5px] text-ink-2 mb-1.5 truncate">
           {elemento.nombrePliego && <>Pliego: {elemento.nombrePliego} · </>}
           {formatNumber(elemento.altura)} m · {formatNumber(elemento.volumen)} m³/u
         </p>
         <div className="flex items-center gap-2">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
-          <span className="text-[12px] font-medium text-[#6e6e73] shrink-0 tabular-nums">
+          <span className="text-[12px] font-medium text-ink-2 shrink-0 tabular-nums">
             {formatNumber(ejecutado)}/{formatNumber(elemento.cantidad)} {unitLabel(elemento.unidadMedida)}
           </span>
         </div>

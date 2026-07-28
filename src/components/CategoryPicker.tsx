@@ -21,7 +21,7 @@ export function CategoryPicker({ value, onChange }: CategoryPickerProps) {
             className={`flex items-center gap-2.5 rounded-2xl px-3 py-3 text-left border-2 transition-colors ${
               active
                 ? `${style.bg50} border-current ${style.text700}`
-                : 'bg-white border-transparent text-[#1c1c1e]'
+                : 'bg-surface-2 border-transparent text-ink'
             }`}
           >
             <span

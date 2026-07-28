@@ -69,7 +69,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
           action={
             <button
               onClick={() => onNavigate('elementos')}
-              className="px-5 py-2.5 rounded-full bg-[#007AFF] text-white text-[14px] font-semibold active:bg-[#0062cc] flex items-center gap-1.5"
+              className="px-5 py-2.5 rounded-full bg-accent text-white text-[14px] font-semibold active:bg-blue-600 flex items-center gap-1.5"
             >
               Cargar elementos <ArrowRight size={16} />
             </button>
@@ -84,20 +84,20 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
       <Header title="EPET 24" subtitle="Avance de estructura de hormigón" />
 
       <div className="px-5 py-4">
-        <div className="bg-white rounded-3xl p-5 flex items-center gap-5">
-          <ProgressRing percent={resumen.percentGlobal} size={104} strokeWidth={11} colorClass="text-[#007AFF]">
+        <div className="bg-surface rounded-3xl p-5 flex items-center gap-5">
+          <ProgressRing percent={resumen.percentGlobal} size={104} strokeWidth={11} colorClass="text-accent">
             <div className="text-center">
-              <p className="text-[20px] font-bold text-[#1c1c1e] leading-none">
+              <p className="text-[20px] font-bold text-ink leading-none">
                 {formatNumber(resumen.percentGlobal)}%
               </p>
             </div>
           </ProgressRing>
           <div className="flex-1">
-            <p className="text-[13px] text-[#8e8e93] mb-1">Avance general del proyecto</p>
+            <p className="text-[13px] text-ink-2 mb-1">Avance general del proyecto</p>
             {[...resumen.porUnidad.entries()].map(([unidad, { total, ejecutado }]) => (
-              <p key={unidad} className="text-[18px] font-bold text-[#1c1c1e] tabular-nums leading-snug">
+              <p key={unidad} className="text-[18px] font-bold text-ink tabular-nums leading-snug">
                 {formatNumber(ejecutado)}
-                <span className="text-[#8e8e93] font-medium text-[14px]">
+                <span className="text-ink-2 font-medium text-[14px]">
                   {' '}
                   / {formatNumber(total)} {UNIDAD_LABELS[unidad].corta}
                 </span>
@@ -107,14 +107,14 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
         </div>
 
         {ultimoAvance && (
-          <p className="text-[12.5px] text-[#8e8e93] text-center mt-3">
+          <p className="text-[12.5px] text-ink-2 text-center mt-3">
             Último avance registrado el {formatDate(ultimoAvance.fecha)}
           </p>
         )}
       </div>
 
       <div className="px-5 pb-4">
-        <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+        <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
           Por categoría
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -125,20 +125,20 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
               <button
                 key={cat.id}
                 onClick={() => onNavigate('elementos')}
-                className="bg-white rounded-2xl p-4 flex flex-col items-center text-center active:bg-black/[0.02]"
+                className="bg-surface rounded-2xl p-4 flex flex-col items-center text-center active:bg-surface-2"
               >
                 <ProgressRing percent={percent} size={68} strokeWidth={7} colorClass={style.ring}>
                   <Icon size={22} className={style.text600} strokeWidth={1.9} />
                 </ProgressRing>
-                <p className="text-[13px] font-semibold text-[#1c1c1e] mt-2.5 leading-tight">
+                <p className="text-[13px] font-semibold text-ink mt-2.5 leading-tight">
                   {cat.nombre}
                 </p>
-                <p className="text-[12px] text-[#8e8e93] tabular-nums mt-0.5">
+                <p className="text-[12px] text-ink-2 tabular-nums mt-0.5">
                   {[...porUnidad.entries()]
                     .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
                     .join(' · ')}
                 </p>
-                <p className="text-[11px] text-[#c7c7cc] mt-0.5">
+                <p className="text-[11px] text-ink-3 mt-0.5">
                   {items} tipo{items === 1 ? '' : 's'}
                 </p>
               </button>
@@ -150,11 +150,11 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
       <div className="px-5 pb-6">
         <button
           onClick={() => onNavigate('avance')}
-          className="w-full bg-[#1c1c1e] rounded-2xl p-4 flex items-center justify-between active:bg-[#2c2c2e]"
+          className="w-full bg-accent rounded-2xl p-4 flex items-center justify-between active:bg-blue-600"
         >
           <div className="text-left">
             <p className="text-white text-[15px] font-semibold">Registrar avance de hoy</p>
-            <p className="text-[#98989d] text-[12.5px] mt-0.5">
+            <p className="text-white/70 text-[12.5px] mt-0.5">
               Marcá lo que se hormigonó en el día
             </p>
           </div>

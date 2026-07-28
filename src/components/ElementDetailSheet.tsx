@@ -37,64 +37,64 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
           {cat.nombre}
         </span>
         {elemento.nombrePliego && (
-          <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-black/[0.06] text-[#3a3a3c]">
+          <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
             Pliego: {elemento.nombrePliego}
           </span>
         )}
       </div>
 
-      <div className="mt-4 bg-white rounded-2xl p-4">
+      <div className="mt-4 bg-surface rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-[13px] font-medium text-[#6e6e73]">Avance acumulado</p>
-          <p className="text-[15px] font-bold text-[#1c1c1e] tabular-nums">
+          <p className="text-[13px] font-medium text-ink-2">Avance acumulado</p>
+          <p className="text-[15px] font-bold text-ink tabular-nums">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
-            <span className="text-[#8e8e93] font-normal"> · {formatNumber(percent)}%</span>
+            <span className="text-ink-2 font-normal"> · {formatNumber(percent)}%</span>
           </p>
         </div>
         <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-2.5" />
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <div className="bg-white rounded-2xl p-3.5">
-          <p className="text-[12px] text-[#8e8e93] mb-0.5">Volumen unitario</p>
-          <p className="text-[16px] font-semibold text-[#1c1c1e]">
+        <div className="bg-surface rounded-2xl p-3.5">
+          <p className="text-[12px] text-ink-2 mb-0.5">Volumen unitario</p>
+          <p className="text-[16px] font-semibold text-ink">
             {formatNumber(elemento.volumen)} m³
           </p>
         </div>
-        <div className="bg-white rounded-2xl p-3.5">
-          <p className="text-[12px] text-[#8e8e93] mb-0.5">Altura</p>
-          <p className="text-[16px] font-semibold text-[#1c1c1e]">
+        <div className="bg-surface rounded-2xl p-3.5">
+          <p className="text-[12px] text-ink-2 mb-0.5">Altura</p>
+          <p className="text-[16px] font-semibold text-ink">
             {formatNumber(elemento.altura)} m
           </p>
         </div>
       </div>
 
-      <div className="mt-3 bg-white rounded-2xl p-3.5">
-        <p className="text-[12px] text-[#8e8e93] mb-1">Material de encofrado</p>
-        <p className="text-[14.5px] text-[#1c1c1e] leading-snug">
+      <div className="mt-3 bg-surface rounded-2xl p-3.5">
+        <p className="text-[12px] text-ink-2 mb-1">Material de encofrado</p>
+        <p className="text-[14.5px] text-ink leading-snug">
           {elemento.materialEncofrado || 'Sin especificar'}
         </p>
       </div>
 
       <div className="mt-5">
-        <p className="text-[13px] font-semibold text-[#6e6e73] mb-2 px-1">
+        <p className="text-[13px] font-semibold text-ink-2 mb-2 px-1">
           Historial de avance ({historial.length})
         </p>
         {historial.length === 0 ? (
-          <p className="text-[13px] text-[#8e8e93] px-1">Todavía no se registró avance.</p>
+          <p className="text-[13px] text-ink-2 px-1">Todavía no se registró avance.</p>
         ) : (
-          <div className="bg-white rounded-2xl divide-y divide-black/[0.05] overflow-hidden">
+          <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
             {historial.map((a) => (
               <div key={a.id} className="px-3.5 py-2.5 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-[14px] font-medium text-[#1c1c1e]">
+                  <p className="text-[14px] font-medium text-ink">
                     +{formatQty(a.cantidad, elemento.unidadMedida)}
                   </p>
                   {a.observaciones && (
-                    <p className="text-[12.5px] text-[#8e8e93]">{a.observaciones}</p>
+                    <p className="text-[12.5px] text-ink-2">{a.observaciones}</p>
                   )}
                 </div>
-                <span className="text-[12.5px] text-[#8e8e93] shrink-0">{formatDate(a.fecha)}</span>
+                <span className="text-[12.5px] text-ink-2 shrink-0">{formatDate(a.fecha)}</span>
               </div>
             ))}
           </div>
@@ -104,7 +104,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
       <div className="mt-6 flex gap-3 pb-4">
         <button
           onClick={() => onEdit(elemento)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-black/[0.06] text-[#1c1c1e] text-[14px] font-semibold active:bg-black/[0.1]"
+          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-surface-2 text-ink text-[14px] font-semibold active:bg-surface-3"
         >
           <Pencil size={16} /> Editar
         </button>
@@ -121,7 +121,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-red-50 text-red-600 text-[14px] font-semibold active:bg-red-100"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-red-500/15 text-red-400 text-[14px] font-semibold active:bg-red-500/25"
           >
             <Trash2 size={16} /> Eliminar
           </button>

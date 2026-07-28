@@ -62,7 +62,7 @@ export function ElementosScreen() {
         action={
           <button
             onClick={openNew}
-            className="w-10 h-10 rounded-full bg-[#007AFF] flex items-center justify-center active:bg-[#0062cc] shadow-sm"
+            className="w-10 h-10 rounded-full bg-accent flex items-center justify-center active:bg-blue-600 shadow-sm"
             aria-label="Agregar elemento"
           >
             <Plus size={22} className="text-white" strokeWidth={2.5} />
@@ -92,7 +92,7 @@ export function ElementosScreen() {
           action={
             <button
               onClick={openNew}
-              className="px-5 py-2.5 rounded-full bg-[#007AFF] text-white text-[14px] font-semibold active:bg-[#0062cc]"
+              className="px-5 py-2.5 rounded-full bg-accent text-white text-[14px] font-semibold active:bg-blue-600"
             >
               Agregar el primero
             </button>
@@ -106,10 +106,10 @@ export function ElementosScreen() {
               <div key={cat.id}>
                 <div className="flex items-center gap-2 mb-2 px-1">
                   <span className={`w-2 h-2 rounded-full ${style.bar}`} />
-                  <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide">
+                  <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">
                     {cat.nombre}
                   </p>
-                  <span className="text-[12px] text-[#c7c7cc]">{items.length}</span>
+                  <span className="text-[12px] text-ink-3">{items.length}</span>
                 </div>
                 <div className="space-y-2">
                   {items.map((e) => (
@@ -140,7 +140,7 @@ export function ElementosScreen() {
           <button
             type="submit"
             form="element-form"
-            className="w-full py-3.5 rounded-xl bg-[#007AFF] text-white text-[16px] font-semibold active:bg-[#0062cc]"
+            className="w-full py-3.5 rounded-xl bg-accent text-white text-[16px] font-semibold active:bg-blue-600"
           >
             {editing ? 'Guardar cambios' : 'Agregar elemento'}
           </button>
@@ -157,7 +157,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
     <button
       onClick={onClick}
       className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap ${
-        active ? 'bg-[#1c1c1e] text-white' : 'bg-black/[0.06] text-[#3a3a3c]'
+        active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'
       }`}
     >
       {label}

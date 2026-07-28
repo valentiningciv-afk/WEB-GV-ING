@@ -64,10 +64,10 @@ export function ReportesScreen() {
       </div>
 
       <div className="px-5 py-4">
-        <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+        <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
           Acumulado por elemento
         </p>
-        <div className="bg-white rounded-2xl divide-y divide-black/[0.05] overflow-hidden">
+        <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
           {elementosFiltrados.map((e) => {
             const ejecutado = ejecutadoDe(e.id);
             const percent = e.cantidad > 0 ? (ejecutado / e.cantidad) * 100 : 0;
@@ -77,16 +77,16 @@ export function ReportesScreen() {
               <div key={e.id} className="px-3.5 py-3">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="min-w-0">
-                    <p className="text-[14px] font-semibold text-[#1c1c1e] truncate">{e.nombre}</p>
-                    <p className="text-[11.5px] text-[#8e8e93]">{cat.nombreSingular}</p>
+                    <p className="text-[14px] font-semibold text-ink truncate">{e.nombre}</p>
+                    <p className="text-[11.5px] text-ink-2">{cat.nombreSingular}</p>
                   </div>
-                  <p className="text-[13px] font-bold text-[#1c1c1e] tabular-nums shrink-0 ml-2">
+                  <p className="text-[13px] font-bold text-ink tabular-nums shrink-0 ml-2">
                     {formatNumber(percent)}%
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
                   <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
-                  <span className="text-[11.5px] text-[#8e8e93] tabular-nums shrink-0">
+                  <span className="text-[11.5px] text-ink-2 tabular-nums shrink-0">
                     {formatQty(ejecutado, e.unidadMedida)}/{formatQty(e.cantidad, e.unidadMedida)}
                   </span>
                 </div>
@@ -97,11 +97,11 @@ export function ReportesScreen() {
       </div>
 
       <div className="px-5 pb-8">
-        <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+        <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
           Historial cronológico
         </p>
         {grupos.length === 0 ? (
-          <p className="text-[13px] text-[#8e8e93] px-1">Sin registros de avance todavía.</p>
+          <p className="text-[13px] text-ink-2 px-1">Sin registros de avance todavía.</p>
         ) : (
           <div className="space-y-3">
             {grupos.map(([fecha, entradas]) => {
@@ -115,16 +115,16 @@ export function ReportesScreen() {
                 );
               }
               return (
-                <div key={fecha} className="bg-white rounded-2xl overflow-hidden">
-                  <div className="px-3.5 py-2.5 bg-black/[0.03] flex items-center justify-between gap-2">
-                    <p className="text-[13px] font-semibold text-[#1c1c1e]">{formatDate(fecha)}</p>
-                    <p className="text-[12px] text-[#8e8e93] tabular-nums">
+                <div key={fecha} className="bg-surface rounded-2xl overflow-hidden">
+                  <div className="px-3.5 py-2.5 bg-white/[0.04] flex items-center justify-between gap-2">
+                    <p className="text-[13px] font-semibold text-ink">{formatDate(fecha)}</p>
+                    <p className="text-[12px] text-ink-2 tabular-nums">
                       {[...totalesPorUnidad.entries()]
                         .map(([u, total]) => `+${formatNumber(total)} ${UNIDAD_LABELS[u].corta}`)
                         .join(' · ')}
                     </p>
                   </div>
-                  <div className="divide-y divide-black/[0.05]">
+                  <div className="divide-y divide-white/[0.07]">
                     {entradas.map((a) => {
                       const el = elementoById.get(a.elementoId);
                       if (!el) return null;
@@ -132,13 +132,13 @@ export function ReportesScreen() {
                       return (
                         <div key={a.id} className="px-3.5 py-2.5 flex items-center gap-2.5">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${style.bar}`} />
-                          <p className="text-[13.5px] text-[#1c1c1e] flex-1 truncate">
+                          <p className="text-[13.5px] text-ink flex-1 truncate">
                             {el.nombre}
                             {a.observaciones && (
-                              <span className="text-[#8e8e93]"> · {a.observaciones}</span>
+                              <span className="text-ink-2"> · {a.observaciones}</span>
                             )}
                           </p>
-                          <span className="text-[13px] font-semibold text-[#1c1c1e] tabular-nums shrink-0">
+                          <span className="text-[13px] font-semibold text-ink tabular-nums shrink-0">
                             +{formatQty(a.cantidad, el.unidadMedida)}
                           </span>
                         </div>
@@ -160,7 +160,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
     <button
       onClick={onClick}
       className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap ${
-        active ? 'bg-[#1c1c1e] text-white' : 'bg-black/[0.06] text-[#3a3a3c]'
+        active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'
       }`}
     >
       {label}

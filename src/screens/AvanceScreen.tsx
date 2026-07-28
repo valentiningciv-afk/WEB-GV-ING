@@ -58,7 +58,7 @@ export function AvanceScreen() {
       <div className="px-5 py-3 space-y-6">
         {pendientes.length > 0 && (
           <div>
-            <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+            <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
               Pendientes ({pendientes.length})
             </p>
             <div className="space-y-2">
@@ -71,7 +71,7 @@ export function AvanceScreen() {
 
         {completos.length > 0 && (
           <div>
-            <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+            <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
               Completados ({completos.length})
             </p>
             <div className="space-y-2 opacity-80">
@@ -83,13 +83,13 @@ export function AvanceScreen() {
         )}
 
         <div>
-          <p className="text-[13px] font-semibold text-[#6e6e73] uppercase tracking-wide mb-2 px-1">
+          <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
             Actividad reciente
           </p>
           {reciente.length === 0 ? (
-            <p className="text-[13px] text-[#8e8e93] px-1">Todavía no se registraron avances.</p>
+            <p className="text-[13px] text-ink-2 px-1">Todavía no se registraron avances.</p>
           ) : (
-            <div className="bg-white rounded-2xl divide-y divide-black/[0.05] overflow-hidden">
+            <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
               {reciente.map((a) => {
                 const el = elementoById.get(a.elementoId);
                 if (!el) return null;
@@ -99,17 +99,17 @@ export function AvanceScreen() {
                   <div key={a.id} className="px-3.5 py-3 flex items-center gap-3">
                     <span className={`w-2 h-2 rounded-full shrink-0 ${style.bar}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-medium text-[#1c1c1e] truncate">
-                        {el.nombre} <span className="text-[#8e8e93] font-normal">· {cat.nombreSingular}</span>
+                      <p className="text-[14px] font-medium text-ink truncate">
+                        {el.nombre} <span className="text-ink-2 font-normal">· {cat.nombreSingular}</span>
                       </p>
-                      <p className="text-[12.5px] text-[#8e8e93]">
+                      <p className="text-[12.5px] text-ink-2">
                         +{formatQty(a.cantidad, el.unidadMedida)} · {formatDate(a.fecha)}
                         {a.observaciones ? ` · ${a.observaciones}` : ''}
                       </p>
                     </div>
                     <button
                       onClick={() => deleteAvance(a.id)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-[#c7c7cc] active:bg-black/[0.05] shrink-0"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-3 active:bg-white/[0.06] shrink-0"
                       aria-label="Eliminar registro"
                     >
                       <Trash2 size={16} />
@@ -141,14 +141,14 @@ function SelectableRow({
   return (
     <button
       onClick={onClick}
-      className="w-full bg-white rounded-2xl p-3 flex items-center gap-3 text-left active:bg-black/[0.02] shadow-[0_1px_2px_rgba(0,0,0,0.04)]"
+      className="w-full bg-surface rounded-2xl p-3 flex items-center gap-3 text-left active:bg-surface-2"
     >
       <PhotoThumb src={elemento.foto} sizeClass="w-12 h-12" />
       <div className="flex-1 min-w-0">
-        <p className="text-[14.5px] font-semibold text-[#1c1c1e] truncate">{elemento.nombre}</p>
+        <p className="text-[14.5px] font-semibold text-ink truncate">{elemento.nombre}</p>
         <div className="flex items-center gap-2 mt-1">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
-          <span className="text-[12px] font-medium text-[#6e6e73] shrink-0 tabular-nums">
+          <span className="text-[12px] font-medium text-ink-2 shrink-0 tabular-nums">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
           </span>
         </div>

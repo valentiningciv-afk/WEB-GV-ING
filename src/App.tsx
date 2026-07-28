@@ -15,19 +15,19 @@ function AppShell() {
 
   if (loading) {
     return (
-      <div className="min-h-svh flex items-center justify-center bg-[#f2f2f7]">
+      <div className="min-h-svh flex items-center justify-center bg-app">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 rounded-full border-2 border-[#c7c7cc] border-t-[#007AFF] animate-spin" />
-          <p className="text-[13px] text-[#8e8e93]">Conectando con la base del proyecto…</p>
+          <div className="w-8 h-8 rounded-full border-2 border-white/15 border-t-accent animate-spin" />
+          <p className="text-[13px] text-ink-2">Conectando con la base del proyecto…</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-svh flex flex-col bg-[#f2f2f7]">
+    <div className="min-h-svh flex flex-col bg-app">
       {syncError && (
-        <div className="bg-red-500 text-white text-[12.5px] px-4 py-2 flex items-center gap-2 pt-[calc(env(safe-area-inset-top)+8px)]">
+        <div className="bg-red-500/90 text-white text-[12.5px] px-4 py-2 flex items-center gap-2 pt-[calc(env(safe-area-inset-top)+8px)]">
           <WifiOff size={14} className="shrink-0" />
           <span className="truncate">Sin conexión con la base compartida: {syncError}</span>
         </div>

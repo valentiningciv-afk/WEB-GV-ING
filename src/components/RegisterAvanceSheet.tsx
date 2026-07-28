@@ -54,17 +54,17 @@ function Inner({
         <button
           onClick={handleSubmit}
           disabled={cantidad <= 0}
-          className="w-full py-3.5 rounded-xl bg-[#007AFF] text-white text-[16px] font-semibold active:bg-[#0062cc] disabled:opacity-40"
+          className="w-full py-3.5 rounded-xl bg-accent text-white text-[16px] font-semibold active:bg-blue-600 disabled:opacity-40"
         >
           Guardar avance
         </button>
       }
     >
-      <div className="flex items-center gap-3 bg-white rounded-2xl p-3 mb-4">
+      <div className="flex items-center gap-3 bg-surface rounded-2xl p-3 mb-4">
         <PhotoThumb src={elemento.foto} sizeClass="w-14 h-14" />
         <div className="flex-1 min-w-0">
-          <p className="text-[15px] font-semibold text-[#1c1c1e] truncate">{elemento.nombre}</p>
-          <p className="text-[12.5px] text-[#8e8e93] mb-1">
+          <p className="text-[15px] font-semibold text-ink truncate">{elemento.nombre}</p>
+          <p className="text-[12.5px] text-ink-2 mb-1">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)} hecho
           </p>
           <ProgressBar
@@ -76,18 +76,18 @@ function Inner({
       </div>
 
       {restante === 0 ? (
-        <p className="text-[14px] text-losa-700 bg-losa-50 rounded-xl px-3.5 py-3 mb-4 font-medium">
+        <p className="text-[14px] text-losa bg-losa/15 rounded-xl px-3.5 py-3 mb-4 font-medium">
           Este elemento ya está completo. Podés seguir registrando avances adicionales si corresponde.
         </p>
       ) : (
-        <p className="text-[13px] text-[#8e8e93] px-1 mb-4">
-          Quedan <strong className="text-[#1c1c1e]">{formatQty(restante, elemento.unidadMedida)}</strong> por hormigonar.
+        <p className="text-[13px] text-ink-2 px-1 mb-4">
+          Quedan <strong className="text-ink">{formatQty(restante, elemento.unidadMedida)}</strong> por hormigonar.
         </p>
       )}
 
       <Field label={esUnidad ? 'Cantidad hormigonada' : 'Superficie hormigonada (m²)'}>
         {esUnidad ? (
-          <div className="bg-white rounded-xl ring-1 ring-black/[0.06] px-3.5 py-2.5 flex justify-center">
+          <div className="bg-surface rounded-xl ring-1 ring-white/[0.08] px-3.5 py-2.5 flex justify-center">
             <Stepper value={cantidad} onChange={setCantidad} min={1} max={restante || undefined} />
           </div>
         ) : (
@@ -105,7 +105,7 @@ function Inner({
               <button
                 type="button"
                 onClick={() => setCantidad(restante)}
-                className="shrink-0 px-3 py-3 rounded-xl bg-black/[0.06] text-[13px] font-semibold text-[#1c1c1e] active:bg-black/[0.1]"
+                className="shrink-0 px-3 py-3 rounded-xl bg-surface-2 text-[13px] font-semibold text-ink active:bg-surface-3"
               >
                 Todo ({formatQty(restante, elemento.unidadMedida)})
               </button>

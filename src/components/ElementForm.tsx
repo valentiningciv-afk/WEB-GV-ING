@@ -90,8 +90,8 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
             onClick={() => setUnidadMedida('u')}
             className={`rounded-xl px-3 py-2.5 text-[14px] font-medium border-2 ${
               unidadMedida === 'u'
-                ? 'bg-[#007AFF]/10 border-[#007AFF] text-[#007AFF]'
-                : 'bg-white border-transparent text-[#1c1c1e]'
+                ? 'bg-accent/15 border-accent text-accent'
+                : 'bg-surface-2 border-transparent text-ink'
             }`}
           >
             Unidades
@@ -101,8 +101,8 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
             onClick={() => setUnidadMedida('m2')}
             className={`rounded-xl px-3 py-2.5 text-[14px] font-medium border-2 ${
               unidadMedida === 'm2'
-                ? 'bg-[#007AFF]/10 border-[#007AFF] text-[#007AFF]'
-                : 'bg-white border-transparent text-[#1c1c1e]'
+                ? 'bg-accent/15 border-accent text-accent'
+                : 'bg-surface-2 border-transparent text-ink'
             }`}
           >
             m² (superficie)
@@ -112,7 +112,7 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
 
       <Field label={unidadMedida === 'u' ? 'Cantidad total en el proyecto' : 'Superficie total en el proyecto (m²)'}>
         {unidadMedida === 'u' ? (
-          <div className="bg-white rounded-xl ring-1 ring-black/[0.06] px-3.5 py-2.5 flex justify-center">
+          <div className="bg-surface rounded-xl ring-1 ring-white/[0.08] px-3.5 py-2.5 flex justify-center">
             <Stepper value={cantidad} onChange={setCantidad} min={1} />
           </div>
         ) : (

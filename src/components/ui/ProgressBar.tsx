@@ -8,7 +8,7 @@ interface ProgressBarProps {
 export function ProgressBar({
   percent,
   colorClass,
-  trackClass = 'bg-black/[0.06]',
+  trackClass = 'bg-white/[0.1]',
   heightClass = 'h-2',
 }: ProgressBarProps) {
   const clamped = Math.max(0, Math.min(100, percent));
