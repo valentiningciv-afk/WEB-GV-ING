@@ -15,7 +15,7 @@ import {
   type Zona,
 } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
+import { formatDate, formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
 
 type CategoriaFiltro = 'todas' | Categoria;
 type ZonaFiltro = 'todas' | Zona;
@@ -111,7 +111,7 @@ export function ReportesScreen() {
                     {items} tipo{items === 1 ? '' : 's'} de elemento
                   </p>
                 </div>
-                <p className="text-[15px] font-bold text-ink tabular-nums">{formatNumber(percent)}%</p>
+                <p className="text-[15px] font-bold text-ink tabular-nums">{formatPercent(percent)}</p>
               </div>
               <ProgressBar percent={percent} colorClass="bg-accent" heightClass="h-1.5" />
               <p className="text-[11.5px] text-ink-2 tabular-nums mt-1.5">
@@ -165,7 +165,7 @@ export function ReportesScreen() {
                       </p>
                     </div>
                     <p className="text-[13px] font-bold text-ink tabular-nums shrink-0 ml-2">
-                      {formatNumber(percent)}%
+                      {formatPercent(percent)}
                     </p>
                   </div>
                   <div className="flex items-center gap-2">

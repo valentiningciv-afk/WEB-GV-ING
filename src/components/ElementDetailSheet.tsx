@@ -4,7 +4,7 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
 import { getCategoriaInfo, getZonaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
+import { formatDate, formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
 import { ProgressBar } from './ui/ProgressBar';
 import { Sheet } from './ui/Sheet';
@@ -50,7 +50,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
           <p className="text-[13px] font-medium text-ink-2">Avance acumulado</p>
           <p className="text-[15px] font-bold text-ink tabular-nums">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
-            <span className="text-ink-2 font-normal"> · {formatNumber(percent)}%</span>
+            <span className="text-ink-2 font-normal"> · {formatPercent(percent)}</span>
           </p>
         </div>
         <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-2.5" />

@@ -34,3 +34,8 @@ export function formatNivel(altura: number): string {
   if (!altura) return 'Sin nivel';
   return `+${altura.toFixed(2).replace('.', ',')}`;
 }
+
+/** Porcentajes siempre en número entero, sin decimales. */
+export function formatPercent(n: number): string {
+  return `${Math.round(n)}%`;
+}
