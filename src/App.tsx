@@ -1,13 +1,17 @@
 import { WifiOff } from 'lucide-react';
 import { useState } from 'react';
 import { BottomNav } from './components/BottomNav';
-import { ProjectProvider, useProject } from './store/ProjectContext';
+import { ProjectProvider } from './store/ProjectContext';
+import { LocalProjectProvider } from './store/LocalProjectContext';
+import { useProject } from './store/projectContextBase';
 import { InicioScreen } from './screens/InicioScreen';
 import { ElementosScreen } from './screens/ElementosScreen';
 import { AvanceScreen } from './screens/AvanceScreen';
 import { ReportesScreen } from './screens/ReportesScreen';
 
 export type Tab = 'inicio' | 'elementos' | 'avance' | 'reportes';
+
+const IS_LOCAL_PREVIEW = import.meta.env.VITE_BACKEND === 'local';
 
 function AppShell() {
   const [tab, setTab] = useState<Tab>('inicio');
@@ -26,6 +30,11 @@ function AppShell() {
 
   return (
     <div className="min-h-svh flex flex-col bg-app">
+      {IS_LOCAL_PREVIEW && (
+        <div className="bg-accent/90 text-white text-[12px] px-4 py-1.5 text-center pt-[calc(env(safe-area-inset-top)+6px)]">
+          Vista previa — los datos se guardan solo en este dispositivo, no se comparten
+        </div>
+      )}
       {syncError && (
         <div className="bg-red-500/90 text-white text-[12.5px] px-4 py-2 flex items-center gap-2 pt-[calc(env(safe-area-inset-top)+8px)]">
           <WifiOff size={14} className="shrink-0" />
@@ -45,11 +54,15 @@ function AppShell() {
   );
 }
 
+// Modo local (sin Supabase): usado para publicar una vista previa
+// autocontenida que no depende de tener la base de datos configurada.
+const Provider = import.meta.env.VITE_BACKEND === 'local' ? LocalProjectProvider : ProjectProvider;
+
 function App() {
   return (
-    <ProjectProvider>
+    <Provider>
       <AppShell />
-    </ProjectProvider>
+    </Provider>
   );
 }
 

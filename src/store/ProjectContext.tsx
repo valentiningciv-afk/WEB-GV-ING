@@ -1,7 +1,5 @@
 import {
-  createContext,
   useCallback,
-  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -19,29 +17,9 @@ import {
   type ElementoRow,
 } from '../lib/mappers';
 import type { AvanceEntry, ElementoEstructural } from '../types';
+import { ProjectContext, uid, type ProjectContextValue } from './projectContextBase';
 
-function uid(): string {
-  return crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
-}
-
-interface ProjectContextValue {
-  elementos: ElementoEstructural[];
-  avances: AvanceEntry[];
-  loading: boolean;
-  syncError: string | null;
-  addElemento: (e: Omit<ElementoEstructural, 'id' | 'creadoEn'>) => string;
-  updateElemento: (
-    id: string,
-    e: Omit<ElementoEstructural, 'id' | 'creadoEn'>,
-  ) => void;
-  deleteElemento: (id: string) => void;
-  addAvance: (a: Omit<AvanceEntry, 'id' | 'creadoEn'>) => void;
-  updateAvance: (id: string, a: Omit<AvanceEntry, 'id' | 'creadoEn'>) => void;
-  deleteAvance: (id: string) => void;
-  ejecutadoDe: (elementoId: string) => number;
-}
-
-const ProjectContext = createContext<ProjectContextValue | null>(null);
+export { useProject } from './projectContextBase';
 
 export function ProjectProvider({ children }: { children: ReactNode }) {
   const [elementos, setElementos] = useState<ElementoEstructural[]>([]);
@@ -267,10 +245,4 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
   );
 
   return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
-}
-
-export function useProject(): ProjectContextValue {
-  const ctx = useContext(ProjectContext);
-  if (!ctx) throw new Error('useProject debe usarse dentro de ProjectProvider');
-  return ctx;
 }

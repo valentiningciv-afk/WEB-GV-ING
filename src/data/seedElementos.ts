@@ -8,10 +8,6 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * "ejecutado" es la cantidad ya hormigonada informada a la fecha de esta
  * carga; se registra como un único avance de arranque por elemento.
  *
- * Nota: en Zona 3 nivel +2,20, "VIT" figura en la planilla original con
- * Cant. Total = 4 un pero Cant. Ejecutada = 15 un (ejecutado mayor al
- * total, no puede ser correcto). Se carga el total tal cual figura y se
- * deja sin avance hasta confirmar el valor real.
  */
 interface SeedRow {
   zona: Zona;
@@ -46,7 +42,7 @@ const SEED_DATA: SeedRow[] = [
 
   // Zona 3
   { zona: 'zona3', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 36, unidadMedida: 'u', ejecutado: 16 },
-  { zona: 'zona3', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 4, unidadMedida: 'u' }, // ver nota: dato de origen inconsistente
+  { zona: 'zona3', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 19, unidadMedida: 'u', ejecutado: 15 },
   { zona: 'zona3', nivel: 2.2, nombre: 'VE', categoria: 'viga_aerea', cantidad: 87, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 12, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 104, unidadMedida: 'u' },
