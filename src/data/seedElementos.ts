@@ -8,6 +8,9 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * "ejecutado" es la cantidad ya hormigonada informada a la fecha de esta
  * carga; se registra como un único avance de arranque por elemento.
  *
+ * Nota: en Zona 3 nivel +2,20, "VIT" figura en la planilla con Cant. Total
+ * = 4 un, pero el usuario confirmó por chat que el total real es 19 un.
+ * Se usa 19 (lo confirmado) hasta que se corrija en la planilla de origen.
  */
 interface SeedRow {
   zona: Zona;
@@ -21,8 +24,8 @@ interface SeedRow {
 
 const SEED_DATA: SeedRow[] = [
   // Ala de Aulas
-  { zona: 'aulas', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u' },
-  { zona: 'aulas', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
+  { zona: 'aulas', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u', ejecutado: 40 },
+  { zona: 'aulas', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u', ejecutado: 38 },
   { zona: 'aulas', nivel: 2.2, nombre: 'VE', categoria: 'viga_aerea', cantidad: 31, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VI 3', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
@@ -30,8 +33,8 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'aulas', nivel: 4.25, nombre: 'Losa 1', categoria: 'losa', cantidad: 238, unidadMedida: 'm2' },
 
   // Ala de Talleres
-  { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u', ejecutado: 40 },
-  { zona: 'talleres', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u', ejecutado: 38 },
+  { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u' },
+  { zona: 'talleres', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'talleres', nivel: 2.2, nombre: 'VE', categoria: 'viga_aerea', cantidad: 21, unidadMedida: 'u' },
   { zona: 'talleres', nivel: 4.25, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 27, unidadMedida: 'u' },
   { zona: 'talleres', nivel: 4.25, nombre: 'VE', categoria: 'viga_aerea', cantidad: 28, unidadMedida: 'u' },
