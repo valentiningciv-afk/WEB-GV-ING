@@ -15,7 +15,7 @@ import {
   type Zona,
 } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNumber, formatQty } from '../utils/format';
+import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
 
 type CategoriaFiltro = 'todas' | Categoria;
 type ZonaFiltro = 'todas' | Zona;
@@ -161,7 +161,7 @@ export function ReportesScreen() {
                     <div className="min-w-0">
                       <p className="text-[14px] font-semibold text-ink truncate">{e.nombre}</p>
                       <p className="text-[11.5px] text-ink-2">
-                        {cat.nombreSingular} · {zona.nombreCorto}
+                        {cat.nombreSingular} · {formatNivel(e.altura)} · {zona.nombreCorto}
                       </p>
                     </div>
                     <p className="text-[13px] font-bold text-ink tabular-nums shrink-0 ml-2">
@@ -219,7 +219,10 @@ export function ReportesScreen() {
                         <div key={a.id} className="px-3.5 py-2.5 flex items-center gap-2.5">
                           <span className={`w-2 h-2 rounded-full shrink-0 ${style.bar}`} />
                           <p className="text-[13.5px] text-ink flex-1 truncate">
-                            {el.nombre} <span className="text-ink-2">· {zona.nombreCorto}</span>
+                            {el.nombre}{' '}
+                            <span className="text-ink-2">
+                              · {formatNivel(el.altura)} · {zona.nombreCorto}
+                            </span>
                             {a.observaciones && (
                               <span className="text-ink-2"> · {a.observaciones}</span>
                             )}

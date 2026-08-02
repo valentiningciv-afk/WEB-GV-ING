@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { createSeedElementos } from '../data/seedElementos';
+import { createSeedAvances, createSeedElementos } from '../data/seedElementos';
 import { supabase } from '../lib/supabase';
 import {
   avanceFromRow,
@@ -81,6 +81,15 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
           .insert(seedElementos.map(elementoToRow));
         if (!insertElError) {
           elementosData = seedElementos;
+          const seedAvances = createSeedAvances(seedElementos);
+          if (seedAvances.length > 0) {
+            const { error: insertAvError } = await supabase
+              .from('avances')
+              .insert(seedAvances.map(avanceToRow));
+            if (!insertAvError) {
+              avancesData = seedAvances;
+            }
+          }
         }
       }
 

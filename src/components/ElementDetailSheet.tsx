@@ -4,7 +4,7 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
 import { getCategoriaInfo, getZonaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNumber, formatQty } from '../utils/format';
+import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
 import { ProgressBar } from './ui/ProgressBar';
 import { Sheet } from './ui/Sheet';
@@ -40,6 +40,9 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
         <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
           {zona.nombre}
         </span>
+        <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
+          Nivel {formatNivel(elemento.altura)}
+        </span>
       </div>
 
       <div className="mt-4 bg-surface rounded-2xl p-4">
@@ -61,9 +64,9 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
           </p>
         </div>
         <div className="bg-surface rounded-2xl p-3.5">
-          <p className="text-[12px] text-ink-2 mb-0.5">Altura</p>
+          <p className="text-[12px] text-ink-2 mb-0.5">Nivel</p>
           <p className="text-[16px] font-semibold text-ink">
-            {formatNumber(elemento.altura)} m
+            {formatNivel(elemento.altura)}
           </p>
         </div>
       </div>

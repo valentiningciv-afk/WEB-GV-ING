@@ -9,7 +9,7 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural, Zona } from '../types';
 import { getCategoriaInfo, getZonaInfo, ZONAS } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatQty } from '../utils/format';
+import { formatDate, formatNivel, formatQty } from '../utils/format';
 
 type ZonaFiltro = 'todas' | Zona;
 
@@ -144,7 +144,7 @@ export function AvanceScreen() {
                       <p className="text-[14px] font-medium text-ink truncate">
                         {el.nombre}{' '}
                         <span className="text-ink-2 font-normal">
-                          · {cat.nombreSingular}
+                          · {cat.nombreSingular} · {formatNivel(el.altura)}
                           {zonaFiltro === 'todas' ? ` · ${zona.nombreCorto}` : ''}
                         </span>
                       </p>
@@ -196,7 +196,11 @@ function SelectableRow({
       <div className="flex-1 min-w-0">
         <p className="text-[14.5px] font-semibold text-ink truncate">
           {elemento.nombre}
-          {showZona && <span className="text-ink-2 font-normal"> · {zona.nombreCorto}</span>}
+          <span className="text-ink-2 font-normal">
+            {' '}
+            · {formatNivel(elemento.altura)}
+            {showZona ? ` · ${zona.nombreCorto}` : ''}
+          </span>
         </p>
         <div className="flex items-center gap-2 mt-1">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />

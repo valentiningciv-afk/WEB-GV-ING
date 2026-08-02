@@ -64,15 +64,29 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
         <CategoryPicker value={categoria} onChange={setCategoria} />
       </Field>
 
-      <Field label="Nombre" hint="Ej: VIT, VE, VEL 1, VI 2">
-        <input
-          className={inputClass}
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Nombre que usamos en obra"
-          required
-        />
-      </Field>
+      <div className="grid grid-cols-2 gap-3">
+        <Field label="Nombre" hint="Ej: VIT, VE, VEL 1, VI 2">
+          <input
+            className={inputClass}
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Nombre que usamos en obra"
+            required
+          />
+        </Field>
+        <Field label="Nivel (m)" hint="Ej: 2,20 → nivel +2,20">
+          <input
+            className={inputClass}
+            type="number"
+            inputMode="decimal"
+            step="0.01"
+            min="0"
+            value={altura}
+            onChange={(e) => setAltura(Number(e.target.value))}
+            placeholder="0,00"
+          />
+        </Field>
+      </div>
 
       <Field label="Foto de la sección">
         <PhotoPicker value={foto} onChange={setFoto} />
@@ -124,32 +138,18 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
         )}
       </Field>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Volumen (m³/u)">
-          <input
-            className={inputClass}
-            type="number"
-            inputMode="decimal"
-            step="0.01"
-            min="0"
-            value={volumen}
-            onChange={(e) => setVolumen(Number(e.target.value))}
-            placeholder="0.00"
-          />
-        </Field>
-        <Field label="Altura (m)">
-          <input
-            className={inputClass}
-            type="number"
-            inputMode="decimal"
-            step="0.1"
-            min="0"
-            value={altura}
-            onChange={(e) => setAltura(Number(e.target.value))}
-            placeholder="0.0"
-          />
-        </Field>
-      </div>
+      <Field label="Volumen (m³/u)">
+        <input
+          className={inputClass}
+          type="number"
+          inputMode="decimal"
+          step="0.01"
+          min="0"
+          value={volumen}
+          onChange={(e) => setVolumen(Number(e.target.value))}
+          placeholder="0.00"
+        />
+      </Field>
 
       <Field
         label="Material de encofrado"

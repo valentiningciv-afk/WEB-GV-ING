@@ -8,7 +8,7 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { Sheet } from '../components/ui/Sheet';
 import { useProject } from '../store/ProjectContext';
 import { CATEGORIAS, ZONAS, type Categoria, type ElementoEstructural, type Zona } from '../types';
-import { CATEGORY_STYLES } from '../utils/categoryStyles';
+import { formatNivel } from '../utils/format';
 
 type CategoriaFiltro = 'todas' | Categoria;
 type ZonaFiltro = 'todas' | Zona;
@@ -31,17 +31,20 @@ export function ElementosScreen() {
     [elementos, zonaFiltro, catFiltro],
   );
 
-  const grupos = useMemo(
-    () =>
-      ZONAS.map((zona) => ({
-        zona,
-        categorias: CATEGORIAS.map((cat) => ({
-          cat,
-          items: filtrados.filter((e) => e.zona === zona.id && e.categoria === cat.id),
-        })).filter((g) => g.items.length > 0),
-      })).filter((g) => g.categorias.length > 0),
-    [filtrados],
-  );
+  const grupos = useMemo(() => {
+    return ZONAS.map((zona) => {
+      const items = filtrados.filter((e) => e.zona === zona.id);
+      const niveles = [...new Set(items.map((e) => e.altura))]
+        .sort((a, b) => a - b)
+        .map((altura) => ({
+          altura,
+          items: items
+            .filter((e) => e.altura === altura)
+            .sort((a, b) => a.nombre.localeCompare(b.nombre)),
+        }));
+      return { zona, niveles };
+    }).filter((g) => g.niveles.length > 0);
+  }, [filtrados]);
 
   function openNew() {
     setEditing(null);
@@ -131,34 +134,30 @@ export function ElementosScreen() {
         />
       ) : (
         <div className="px-5 py-3 space-y-7">
-          {grupos.map(({ zona, categorias }) => (
+          {grupos.map(({ zona, niveles }) => (
             <div key={zona.id}>
               <h2 className="text-[19px] font-bold text-ink mb-3 px-1">{zona.nombre}</h2>
               <div className="space-y-5">
-                {categorias.map(({ cat, items }) => {
-                  const style = CATEGORY_STYLES[cat.id];
-                  return (
-                    <div key={cat.id}>
-                      <div className="flex items-center gap-2 mb-2 px-1">
-                        <span className={`w-2 h-2 rounded-full ${style.bar}`} />
-                        <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">
-                          {cat.nombre}
-                        </p>
-                        <span className="text-[12px] text-ink-3">{items.length}</span>
-                      </div>
-                      <div className="space-y-2">
-                        {items.map((e) => (
-                          <ElementCard
-                            key={e.id}
-                            elemento={e}
-                            ejecutado={ejecutadoDe(e.id)}
-                            onClick={() => setDetail(e)}
-                          />
-                        ))}
-                      </div>
+                {niveles.map(({ altura, items }) => (
+                  <div key={altura}>
+                    <div className="flex items-center gap-2 mb-2 px-1">
+                      <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">
+                        Nivel {formatNivel(altura)}
+                      </p>
+                      <span className="text-[12px] text-ink-3">{items.length}</span>
                     </div>
-                  );
-                })}
+                    <div className="space-y-2">
+                      {items.map((e) => (
+                        <ElementCard
+                          key={e.id}
+                          elemento={e}
+                          ejecutado={ejecutadoDe(e.id)}
+                          onClick={() => setDetail(e)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           ))}

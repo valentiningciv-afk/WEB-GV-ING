@@ -28,3 +28,9 @@ export function unitLabel(unidad: UnidadMedida): string {
 export function formatQty(n: number, unidad: UnidadMedida): string {
   return `${formatNumber(n)} ${unitLabel(unidad)}`;
 }
+
+/** El campo "altura" se usa como nivel de obra: 2.2 → "+2,20". */
+export function formatNivel(altura: number): string {
+  if (!altura) return 'Sin nivel';
+  return `+${altura.toFixed(2).replace('.', ',')}`;
+}

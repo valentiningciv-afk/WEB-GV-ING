@@ -1,4 +1,4 @@
-import type { ElementoEstructural } from '../types';
+import { getCategoriaInfo, type ElementoEstructural } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatNumber, unitLabel } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
@@ -14,6 +14,7 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
   const style = CATEGORY_STYLES[elemento.categoria];
   const percent = elemento.cantidad > 0 ? (ejecutado / elemento.cantidad) * 100 : 0;
   const completo = ejecutado >= elemento.cantidad;
+  const cat = getCategoriaInfo(elemento.categoria);
 
   return (
     <button
@@ -23,7 +24,11 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
       <PhotoThumb src={elemento.foto} sizeClass="w-16 h-16" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between gap-2">
-          <p className="text-[15px] font-semibold text-ink truncate">
+          <p className="text-[15px] font-semibold text-ink truncate flex items-center gap-1.5">
+            <span
+              className={`w-1.5 h-1.5 rounded-full shrink-0 ${style.bar}`}
+              title={cat.nombre}
+            />
             {elemento.nombre}
           </p>
           {completo && (
@@ -33,7 +38,7 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
           )}
         </div>
         <p className="text-[12.5px] text-ink-2 mb-1.5 truncate">
-          {formatNumber(elemento.altura)} m · {formatNumber(elemento.volumen)} m³/u
+          {formatNumber(elemento.volumen)} m³/u
         </p>
         <div className="flex items-center gap-2">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
