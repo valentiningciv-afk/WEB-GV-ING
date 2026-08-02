@@ -1,20 +1,36 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { createSeedAvances, createSeedElementos } from '../data/seedElementos';
+import { createSeedAvances, createSeedElementos, SEED_VERSION } from '../data/seedElementos';
 import type { AvanceEntry, ElementoEstructural, Proyecto } from '../types';
 import { ProjectContext, uid, type ProjectContextValue } from './projectContextBase';
 
 const STORAGE_KEY = 'epet24-hormigon-local-v1';
+const VERSION_KEY = 'epet24-hormigon-local-seed-version';
+
+function freshSeed(): Proyecto {
+  const elementos = createSeedElementos();
+  const avances = createSeedAvances(elementos);
+  return { elementos, avances };
+}
 
 function loadInitial(): Proyecto {
   try {
+    // Si cambió el cómputo base (nueva carga de datos), se descarta lo
+    // guardado en este navegador y se arranca de nuevo con el dato fresco —
+    // si no, quien ya haya abierto la vista previa antes nunca vería una
+    // corrección posterior.
+    const storedVersion = localStorage.getItem(VERSION_KEY);
+    if (storedVersion !== String(SEED_VERSION)) {
+      const data = freshSeed();
+      localStorage.setItem(VERSION_KEY, String(SEED_VERSION));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      return data;
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as Proyecto;
   } catch {
     // localStorage corrupto o inaccesible: se arranca con el cómputo base
   }
-  const elementos = createSeedElementos();
-  const avances = createSeedAvances(elementos);
-  return { elementos, avances };
+  return freshSeed();
 }
 
 /**

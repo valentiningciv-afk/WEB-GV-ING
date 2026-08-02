@@ -7,11 +7,16 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  *
  * "ejecutado" es la cantidad ya hormigonada informada a la fecha de esta
  * carga; se registra como un único avance de arranque por elemento.
- *
- * Nota: en Zona 3 nivel +2,20, "VIT" figura en la planilla con Cant. Total
- * = 4 un, pero el usuario confirmó por chat que el total real es 19 un.
- * Se usa 19 (lo confirmado) hasta que se corrija en la planilla de origen.
  */
+
+/**
+ * Se incrementa cada vez que cambian los datos de este archivo. La vista
+ * previa local (sin backend) usa este número para saber que tiene que
+ * descartar lo guardado en el navegador y recargar el cómputo fresco —
+ * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
+ */
+export const SEED_VERSION = 3;
+
 interface SeedRow {
   zona: Zona;
   nivel: number;
