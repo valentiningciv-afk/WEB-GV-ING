@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import type { Categoria, ElementoEstructural, UnidadMedida } from '../types';
+import type { Categoria, ElementoEstructural, UnidadMedida, Zona } from '../types';
 import { CategoryPicker } from './CategoryPicker';
+import { ZonaPicker } from './ZonaPicker';
 import { PhotoPicker } from './PhotoPicker';
 import { Field, inputClass } from './ui/Field';
 import { Stepper } from './ui/Stepper';
 
 export interface ElementFormValue {
   nombre: string;
-  nombrePliego: string;
   categoria: Categoria;
+  zona: Zona;
   cantidad: number;
   unidadMedida: UnidadMedida;
   foto: string | null;
@@ -25,8 +26,8 @@ interface ElementFormProps {
 
 export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
   const [nombre, setNombre] = useState(initial?.nombre ?? '');
-  const [nombrePliego, setNombrePliego] = useState(initial?.nombrePliego ?? '');
   const [categoria, setCategoria] = useState<Categoria>(initial?.categoria ?? 'viga_aerea');
+  const [zona, setZona] = useState<Zona>(initial?.zona ?? 'aulas');
   const [unidadMedida, setUnidadMedida] = useState<UnidadMedida>(initial?.unidadMedida ?? 'u');
   const [cantidad, setCantidad] = useState(initial?.cantidad ?? 1);
   const [foto, setFoto] = useState<string | null>(initial?.foto ?? null);
@@ -44,8 +45,8 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
         if (!nombre.trim()) return;
         onSubmit({
           nombre: nombre.trim(),
-          nombrePliego: nombrePliego.trim(),
           categoria,
+          zona,
           cantidad,
           unidadMedida,
           foto,
@@ -55,29 +56,23 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
         });
       }}
     >
+      <Field label="Zona / frente de avance">
+        <ZonaPicker value={zona} onChange={setZona} />
+      </Field>
+
       <Field label="Categoría">
         <CategoryPicker value={categoria} onChange={setCategoria} />
       </Field>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Field label="Nombre interno" hint="Ej: VIT, VE, VEL 1, VI 2">
-          <input
-            className={inputClass}
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="Nombre que usamos en obra"
-            required
-          />
-        </Field>
-        <Field label="Denominación del pliego" hint="Ej: Viga carga, L1, AH">
-          <input
-            className={inputClass}
-            value={nombrePliego}
-            onChange={(e) => setNombrePliego(e.target.value)}
-            placeholder="Nombre según pliego"
-          />
-        </Field>
-      </div>
+      <Field label="Nombre" hint="Ej: VIT, VE, VEL 1, VI 2">
+        <input
+          className={inputClass}
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          placeholder="Nombre que usamos en obra"
+          required
+        />
+      </Field>
 
       <Field label="Foto de la sección">
         <PhotoPicker value={foto} onChange={setFoto} />
@@ -110,7 +105,7 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
         </div>
       </Field>
 
-      <Field label={unidadMedida === 'u' ? 'Cantidad total en el proyecto' : 'Superficie total en el proyecto (m²)'}>
+      <Field label={unidadMedida === 'u' ? 'Cantidad total en esta zona' : 'Superficie total en esta zona (m²)'}>
         {unidadMedida === 'u' ? (
           <div className="bg-surface rounded-xl ring-1 ring-white/[0.08] px-3.5 py-2.5 flex justify-center">
             <Stepper value={cantidad} onChange={setCantidad} min={1} />

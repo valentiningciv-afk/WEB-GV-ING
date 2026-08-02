@@ -5,8 +5,8 @@
 create table if not exists elementos (
   id text primary key,
   nombre text not null,
-  nombre_pliego text not null default '',
   categoria text not null check (categoria in ('viga_aerea', 'losa', 'columna', 'columna_mensula', 'antepecho')),
+  zona text not null check (zona in ('aulas', 'talleres', 'zona3')),
   cantidad numeric not null default 0,
   unidad_medida text not null check (unidad_medida in ('u', 'm2')),
   foto text,
@@ -15,6 +15,22 @@ create table if not exists elementos (
   material_encofrado text not null default '',
   creado_en timestamptz not null default now()
 );
+
+-- Reconcilia el esquema si la tabla ya existía de una corrida anterior
+-- (antes de que se agregara "zona" o se sacara "nombre_pliego").
+alter table elementos add column if not exists zona text;
+update elementos set zona = 'aulas' where zona is null;
+alter table elementos alter column zona set not null;
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint where conname = 'elementos_zona_check'
+  ) then
+    alter table elementos add constraint elementos_zona_check
+      check (zona in ('aulas', 'talleres', 'zona3'));
+  end if;
+end $$;
+alter table elementos drop column if exists nombre_pliego;
 
 create table if not exists avances (
   id text primary key,

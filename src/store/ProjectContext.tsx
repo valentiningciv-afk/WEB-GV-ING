@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { createSeedAvances } from '../data/seedAvances';
 import { createSeedElementos } from '../data/seedElementos';
 import { supabase } from '../lib/supabase';
 import {
@@ -75,18 +74,13 @@ export function ProjectProvider({ children }: { children: ReactNode }) {
       let elementosData = (elementosRes.data as ElementoRow[]).map(elementoFromRow);
       let avancesData = (avancesRes.data as AvanceRow[]).map(avanceFromRow);
 
-      if (elementosData.length === 0) {
-        const seedElementos = createSeedElementos();
-        const seedAvances = createSeedAvances(seedElementos);
+      const seedElementos = createSeedElementos();
+      if (elementosData.length === 0 && seedElementos.length > 0) {
         const { error: insertElError } = await supabase
           .from('elementos')
           .insert(seedElementos.map(elementoToRow));
-        if (!insertElError && seedAvances.length > 0) {
-          await supabase.from('avances').insert(seedAvances.map(avanceToRow));
-        }
         if (!insertElError) {
           elementosData = seedElementos;
-          avancesData = seedAvances;
         }
       }
 

@@ -6,30 +6,41 @@ import { RegisterAvanceSheet } from '../components/RegisterAvanceSheet';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { useProject } from '../store/ProjectContext';
-import type { ElementoEstructural } from '../types';
-import { getCategoriaInfo } from '../types';
+import type { ElementoEstructural, Zona } from '../types';
+import { getCategoriaInfo, getZonaInfo, ZONAS } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatQty } from '../utils/format';
+
+type ZonaFiltro = 'todas' | Zona;
 
 export function AvanceScreen() {
   const { elementos, avances, ejecutadoDe, deleteAvance } = useProject();
   const [selected, setSelected] = useState<ElementoEstructural | null>(null);
+  const [zonaFiltro, setZonaFiltro] = useState<ZonaFiltro>('todas');
+
+  const elementosZona = useMemo(
+    () => (zonaFiltro === 'todas' ? elementos : elementos.filter((e) => e.zona === zonaFiltro)),
+    [elementos, zonaFiltro],
+  );
 
   const pendientes = useMemo(
-    () => elementos.filter((e) => ejecutadoDe(e.id) < e.cantidad),
-    [elementos, ejecutadoDe],
+    () => elementosZona.filter((e) => ejecutadoDe(e.id) < e.cantidad),
+    [elementosZona, ejecutadoDe],
   );
   const completos = useMemo(
-    () => elementos.filter((e) => ejecutadoDe(e.id) >= e.cantidad),
-    [elementos, ejecutadoDe],
+    () => elementosZona.filter((e) => ejecutadoDe(e.id) >= e.cantidad),
+    [elementosZona, ejecutadoDe],
   );
+
+  const idsZona = useMemo(() => new Set(elementosZona.map((e) => e.id)), [elementosZona]);
 
   const reciente = useMemo(
     () =>
       [...avances]
+        .filter((a) => idsZona.has(a.elementoId))
         .sort((a, b) => b.fecha.localeCompare(a.fecha) || b.creadoEn.localeCompare(a.creadoEn))
         .slice(0, 15),
-    [avances],
+    [avances, idsZona],
   );
 
   const elementoById = useMemo(() => {
@@ -55,6 +66,20 @@ export function AvanceScreen() {
     <div>
       <Header title="Avance" subtitle="Tocá un elemento para registrar lo hormigonado" />
 
+      <div className="px-5 pt-3 pb-1 overflow-x-auto">
+        <div className="flex gap-2 w-max">
+          <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
+          {ZONAS.map((z) => (
+            <FilterChip
+              key={z.id}
+              active={zonaFiltro === z.id}
+              onClick={() => setZonaFiltro(z.id)}
+              label={z.nombre}
+            />
+          ))}
+        </div>
+      </div>
+
       <div className="px-5 py-3 space-y-6">
         {pendientes.length > 0 && (
           <div>
@@ -63,7 +88,13 @@ export function AvanceScreen() {
             </p>
             <div className="space-y-2">
               {pendientes.map((e) => (
-                <SelectableRow key={e.id} elemento={e} ejecutado={ejecutadoDe(e.id)} onClick={() => setSelected(e)} />
+                <SelectableRow
+                  key={e.id}
+                  elemento={e}
+                  ejecutado={ejecutadoDe(e.id)}
+                  showZona={zonaFiltro === 'todas'}
+                  onClick={() => setSelected(e)}
+                />
               ))}
             </div>
           </div>
@@ -76,10 +107,20 @@ export function AvanceScreen() {
             </p>
             <div className="space-y-2 opacity-80">
               {completos.map((e) => (
-                <SelectableRow key={e.id} elemento={e} ejecutado={ejecutadoDe(e.id)} onClick={() => setSelected(e)} />
+                <SelectableRow
+                  key={e.id}
+                  elemento={e}
+                  ejecutado={ejecutadoDe(e.id)}
+                  showZona={zonaFiltro === 'todas'}
+                  onClick={() => setSelected(e)}
+                />
               ))}
             </div>
           </div>
+        )}
+
+        {pendientes.length === 0 && completos.length === 0 && (
+          <p className="text-[13px] text-ink-2 px-1">No hay elementos cargados en esta zona.</p>
         )}
 
         <div>
@@ -94,13 +135,18 @@ export function AvanceScreen() {
                 const el = elementoById.get(a.elementoId);
                 if (!el) return null;
                 const cat = getCategoriaInfo(el.categoria);
+                const zona = getZonaInfo(el.zona);
                 const style = CATEGORY_STYLES[el.categoria];
                 return (
                   <div key={a.id} className="px-3.5 py-3 flex items-center gap-3">
                     <span className={`w-2 h-2 rounded-full shrink-0 ${style.bar}`} />
                     <div className="flex-1 min-w-0">
                       <p className="text-[14px] font-medium text-ink truncate">
-                        {el.nombre} <span className="text-ink-2 font-normal">· {cat.nombreSingular}</span>
+                        {el.nombre}{' '}
+                        <span className="text-ink-2 font-normal">
+                          · {cat.nombreSingular}
+                          {zonaFiltro === 'todas' ? ` · ${zona.nombreCorto}` : ''}
+                        </span>
                       </p>
                       <p className="text-[12.5px] text-ink-2">
                         +{formatQty(a.cantidad, el.unidadMedida)} · {formatDate(a.fecha)}
@@ -130,14 +176,17 @@ export function AvanceScreen() {
 function SelectableRow({
   elemento,
   ejecutado,
+  showZona,
   onClick,
 }: {
   elemento: ElementoEstructural;
   ejecutado: number;
+  showZona: boolean;
   onClick: () => void;
 }) {
   const style = CATEGORY_STYLES[elemento.categoria];
   const percent = elemento.cantidad > 0 ? (ejecutado / elemento.cantidad) * 100 : 0;
+  const zona = getZonaInfo(elemento.zona);
   return (
     <button
       onClick={onClick}
@@ -145,7 +194,10 @@ function SelectableRow({
     >
       <PhotoThumb src={elemento.foto} sizeClass="w-12 h-12" />
       <div className="flex-1 min-w-0">
-        <p className="text-[14.5px] font-semibold text-ink truncate">{elemento.nombre}</p>
+        <p className="text-[14.5px] font-semibold text-ink truncate">
+          {elemento.nombre}
+          {showZona && <span className="text-ink-2 font-normal"> · {zona.nombreCorto}</span>}
+        </p>
         <div className="flex items-center gap-2 mt-1">
           <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
           <span className="text-[12px] font-medium text-ink-2 shrink-0 tabular-nums">
@@ -153,6 +205,19 @@ function SelectableRow({
           </span>
         </div>
       </div>
+    </button>
+  );
+}
+
+function FilterChip({ active, onClick, label }: { active: boolean; onClick: () => void; label: string }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap ${
+        active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'
+      }`}
+    >
+      {label}
     </button>
   );
 }

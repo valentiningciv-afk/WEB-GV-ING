@@ -33,7 +33,6 @@ export function ElementCard({ elemento, ejecutado, onClick }: ElementCardProps) 
           )}
         </div>
         <p className="text-[12.5px] text-ink-2 mb-1.5 truncate">
-          {elemento.nombrePliego && <>Pliego: {elemento.nombrePliego} · </>}
           {formatNumber(elemento.altura)} m · {formatNumber(elemento.volumen)} m³/u
         </p>
         <div className="flex items-center gap-2">

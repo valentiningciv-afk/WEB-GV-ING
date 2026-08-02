@@ -1,13 +1,18 @@
-import { ArrowRight, HardHat } from 'lucide-react';
+import { ArrowRight, GraduationCap, HardHat, MapPin, Wrench } from 'lucide-react';
 import { useMemo } from 'react';
 import type { Tab } from '../App';
 import { Header } from '../components/Header';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressRing } from '../components/ui/ProgressRing';
 import { useProject } from '../store/ProjectContext';
-import { CATEGORIAS, UNIDAD_LABELS, type UnidadMedida } from '../types';
-import { CATEGORY_STYLES } from '../utils/categoryStyles';
+import { UNIDAD_LABELS, ZONAS, type UnidadMedida, type Zona } from '../types';
 import { formatDate, formatNumber } from '../utils/format';
+
+const ZONA_ICONS: Record<Zona, typeof HardHat> = {
+  aulas: GraduationCap,
+  talleres: Wrench,
+  zona3: MapPin,
+};
 
 interface InicioScreenProps {
   onNavigate: (tab: Tab) => void;
@@ -37,20 +42,20 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
     }
     const percentGlobal = elementos.length > 0 ? (sumaPorcentajes / elementos.length) * 100 : 0;
 
-    const porCategoria = CATEGORIAS.map((cat) => {
-      const items = elementos.filter((e) => e.categoria === cat.id);
-      const catPorUnidad = new Map<UnidadMedida, UnitTotals>();
+    const porZona = ZONAS.map((zona) => {
+      const items = elementos.filter((e) => e.zona === zona.id);
+      const zonaPorUnidad = new Map<UnidadMedida, UnitTotals>();
       let sumaPct = 0;
       for (const e of items) {
         const ejecutado = ejecutadoDe(e.id);
-        mergeUnitTotals(catPorUnidad, e.unidadMedida, e.cantidad, ejecutado);
+        mergeUnitTotals(zonaPorUnidad, e.unidadMedida, e.cantidad, ejecutado);
         sumaPct += e.cantidad > 0 ? Math.min(1, ejecutado / e.cantidad) : 0;
       }
       const percent = items.length > 0 ? (sumaPct / items.length) * 100 : 0;
-      return { cat, percent, porUnidad: catPorUnidad, items: items.length };
-    }).filter((c) => c.items > 0);
+      return { zona, percent, porUnidad: zonaPorUnidad, items: items.length };
+    }).filter((z) => z.items > 0);
 
-    return { porUnidad, percentGlobal, porCategoria };
+    return { porUnidad, percentGlobal, porZona };
   }, [elementos, ejecutadoDe]);
 
   const ultimoAvance = useMemo(
@@ -115,31 +120,34 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
 
       <div className="px-5 pb-4">
         <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
-          Por categoría
+          Por zona
         </p>
-        <div className="grid grid-cols-2 gap-3">
-          {resumen.porCategoria.map(({ cat, percent, porUnidad, items }) => {
-            const style = CATEGORY_STYLES[cat.id];
-            const Icon = style.icon;
+        <div className="space-y-2">
+          {resumen.porZona.map(({ zona, percent, porUnidad, items }) => {
+            const Icon = ZONA_ICONS[zona.id];
             return (
               <button
-                key={cat.id}
+                key={zona.id}
                 onClick={() => onNavigate('elementos')}
-                className="bg-surface rounded-2xl p-4 flex flex-col items-center text-center active:bg-surface-2"
+                className="w-full bg-surface rounded-2xl p-4 flex items-center gap-4 active:bg-surface-2"
               >
-                <ProgressRing percent={percent} size={68} strokeWidth={7} colorClass={style.ring}>
-                  <Icon size={22} className={style.text600} strokeWidth={1.9} />
+                <ProgressRing percent={percent} size={56} strokeWidth={6} colorClass="text-accent">
+                  <Icon size={20} className="text-accent" strokeWidth={1.9} />
                 </ProgressRing>
-                <p className="text-[13px] font-semibold text-ink mt-2.5 leading-tight">
-                  {cat.nombre}
-                </p>
-                <p className="text-[12px] text-ink-2 tabular-nums mt-0.5">
-                  {[...porUnidad.entries()]
-                    .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
-                    .join(' · ')}
-                </p>
-                <p className="text-[11px] text-ink-3 mt-0.5">
-                  {items} tipo{items === 1 ? '' : 's'}
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-[15px] font-semibold text-ink leading-tight">
+                    {zona.nombre}
+                  </p>
+                  <p className="text-[12.5px] text-ink-2 tabular-nums mt-0.5">
+                    {[...porUnidad.entries()]
+                      .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
+                      .join(' · ')}
+                    {' · '}
+                    {items} tipo{items === 1 ? '' : 's'}
+                  </p>
+                </div>
+                <p className="text-[16px] font-bold text-ink tabular-nums shrink-0">
+                  {formatNumber(percent)}%
                 </p>
               </button>
             );

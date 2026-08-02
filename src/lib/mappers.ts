@@ -1,10 +1,10 @@
-import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida } from '../types';
+import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } from '../types';
 
 export interface ElementoRow {
   id: string;
   nombre: string;
-  nombre_pliego: string;
   categoria: Categoria;
+  zona: Zona;
   cantidad: number;
   unidad_medida: UnidadMedida;
   foto: string | null;
@@ -27,8 +27,8 @@ export function elementoFromRow(row: ElementoRow): ElementoEstructural {
   return {
     id: row.id,
     nombre: row.nombre,
-    nombrePliego: row.nombre_pliego,
     categoria: row.categoria,
+    zona: row.zona,
     cantidad: Number(row.cantidad),
     unidadMedida: row.unidad_medida,
     foto: row.foto,
@@ -43,8 +43,8 @@ export function elementoToRow(e: ElementoEstructural): ElementoRow {
   return {
     id: e.id,
     nombre: e.nombre,
-    nombre_pliego: e.nombrePliego,
     categoria: e.categoria,
+    zona: e.zona,
     cantidad: e.cantidad,
     unidad_medida: e.unidadMedida,
     foto: e.foto,

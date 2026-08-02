@@ -62,12 +62,30 @@ export function getCategoriaInfo(id: Categoria): CategoriaInfo {
   return CATEGORIAS.find((c) => c.id === id) ?? CATEGORIAS[0];
 }
 
+/** Frentes de avance de la obra — cómo se organiza el trabajo en el día a día. */
+export type Zona = 'aulas' | 'talleres' | 'zona3';
+
+export interface ZonaInfo {
+  id: Zona;
+  nombre: string;
+  nombreCorto: string;
+}
+
+export const ZONAS: ZonaInfo[] = [
+  { id: 'aulas', nombre: 'Ala de Aulas', nombreCorto: 'Aulas' },
+  { id: 'talleres', nombre: 'Ala de Talleres', nombreCorto: 'Talleres' },
+  { id: 'zona3', nombre: 'Zona 3', nombreCorto: 'Zona 3' },
+];
+
+export function getZonaInfo(id: Zona): ZonaInfo {
+  return ZONAS.find((z) => z.id === id) ?? ZONAS[0];
+}
+
 export interface ElementoEstructural {
   id: string;
   nombre: string;
-  /** Cómo lo llama el pliego de licitación (puede agrupar varios nombres internos, ej: "Viga carga") */
-  nombrePliego: string;
   categoria: Categoria;
+  zona: Zona;
   cantidad: number;
   unidadMedida: UnidadMedida;
   foto: string | null;

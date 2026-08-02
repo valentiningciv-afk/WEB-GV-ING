@@ -2,7 +2,7 @@ import { Pencil, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural } from '../types';
-import { getCategoriaInfo } from '../types';
+import { getCategoriaInfo, getZonaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatNumber, formatQty } from '../utils/format';
 import { PhotoThumb } from './PhotoPicker';
@@ -22,6 +22,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
   if (!elemento) return null;
   const style = CATEGORY_STYLES[elemento.categoria];
   const cat = getCategoriaInfo(elemento.categoria);
+  const zona = getZonaInfo(elemento.zona);
   const ejecutado = ejecutadoDe(elemento.id);
   const percent = elemento.cantidad > 0 ? (ejecutado / elemento.cantidad) * 100 : 0;
   const historial = avances
@@ -36,11 +37,9 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
         <span className={`text-[12px] font-semibold px-2.5 py-1 rounded-full ${style.chip}`}>
           {cat.nombre}
         </span>
-        {elemento.nombrePliego && (
-          <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
-            Pliego: {elemento.nombrePliego}
-          </span>
-        )}
+        <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
+          {zona.nombre}
+        </span>
       </div>
 
       <div className="mt-4 bg-surface rounded-2xl p-4">
