@@ -15,7 +15,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 3;
+export const SEED_VERSION = 4;
 
 interface SeedRow {
   zona: Zona;
@@ -35,7 +35,7 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'aulas', nivel: 4.25, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VI 3', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 27, unidadMedida: 'u' },
-  { zona: 'aulas', nivel: 4.25, nombre: 'Losa 1', categoria: 'losa', cantidad: 238, unidadMedida: 'm2' },
+  { zona: 'aulas', nivel: 4.25, nombre: 'Losa 1', categoria: 'losa', cantidad: 293, unidadMedida: 'm2' },
 
   // Ala de Talleres
   { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u' },
@@ -46,7 +46,7 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'talleres', nivel: 6.35, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'talleres', nivel: 6.35, nombre: 'VI 3', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'talleres', nivel: 6.35, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 20, unidadMedida: 'u' },
-  { zona: 'talleres', nivel: 6.35, nombre: 'Losa 1', categoria: 'losa', cantidad: 238, unidadMedida: 'm2' },
+  { zona: 'talleres', nivel: 6.35, nombre: 'Losa 1', categoria: 'losa', cantidad: 293, unidadMedida: 'm2' },
 
   // Zona 3
   { zona: 'zona3', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 36, unidadMedida: 'u', ejecutado: 16 },
@@ -59,8 +59,8 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'zona3', nivel: 4.25, nombre: 'VI 5', categoria: 'viga_aerea', cantidad: 8, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VI 6', categoria: 'viga_aerea', cantidad: 8, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VI 7', categoria: 'viga_aerea', cantidad: 3, unidadMedida: 'u' },
-  { zona: 'zona3', nivel: 4.25, nombre: 'Losa 1', categoria: 'losa', cantidad: 410, unidadMedida: 'm2' },
-  { zona: 'zona3', nivel: 4.25, nombre: 'Losa 2', categoria: 'losa', cantidad: 90, unidadMedida: 'm2' },
+  { zona: 'zona3', nivel: 4.25, nombre: 'Losa 1', categoria: 'losa', cantidad: 908, unidadMedida: 'm2' },
+  { zona: 'zona3', nivel: 4.25, nombre: 'Losa 2', categoria: 'losa', cantidad: 45, unidadMedida: 'm2' },
   { zona: 'zona3', nivel: 6.35, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 10, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 6.35, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 20, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 7.5, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 20, unidadMedida: 'u' },
