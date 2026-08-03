@@ -12,6 +12,11 @@
   --color-mensula: #bf5af2; /* systemPurple dark */
   --color-antepecho: #40c8e0; /* systemTeal dark */
 
+  /* Colores por zona (frente de avance) — familia distinta a las categorías */
+  --color-aulas: #64d2ff; /* systemCyan dark */
+  --color-talleres: #ff375f; /* systemPink dark */
+  --color-zona3: #ffd60a; /* systemYellow dark */
+
   /* Superficies y texto, estilo iOS modo oscuro */
   --color-app: #000000;
   --color-surface: #1c1c1e;

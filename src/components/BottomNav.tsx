@@ -27,14 +27,14 @@ export function BottomNav({ active, onChange }: BottomNavProps) {
               className="flex flex-col items-center justify-center gap-0.5 py-2 active:opacity-60"
             >
               <Icon
-                size={25}
+                size={26}
                 strokeWidth={isActive ? 2.4 : 1.9}
                 className={isActive ? 'text-accent' : 'text-ink-2'}
                 fill={isActive && item.id !== 'avance' ? 'none' : 'none'}
               />
               <span
-                className={`text-[10.5px] leading-none mt-1 ${
-                  isActive ? 'text-accent font-semibold' : 'text-ink-2'
+                className={`text-[11.5px] leading-none mt-1 ${
+                  isActive ? 'text-accent font-bold' : 'text-ink-2 font-medium'
                 }`}
               >
                 {item.label}

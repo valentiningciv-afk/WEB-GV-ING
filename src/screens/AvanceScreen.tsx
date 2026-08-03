@@ -80,13 +80,13 @@ export function AvanceScreen() {
         </div>
       </div>
 
-      <div className="px-5 py-3 space-y-6">
+      <div className="px-5 py-4 space-y-7">
         {pendientes.length > 0 && (
           <div>
-            <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
+            <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide mb-2.5 px-1">
               Pendientes ({pendientes.length})
             </p>
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               {pendientes.map((e) => (
                 <SelectableRow
                   key={e.id}
@@ -102,10 +102,10 @@ export function AvanceScreen() {
 
         {completos.length > 0 && (
           <div>
-            <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
+            <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide mb-2.5 px-1">
               Completados ({completos.length})
             </p>
-            <div className="space-y-2 opacity-80">
+            <div className="space-y-2.5 opacity-80">
               {completos.map((e) => (
                 <SelectableRow
                   key={e.id}
@@ -120,15 +120,15 @@ export function AvanceScreen() {
         )}
 
         {pendientes.length === 0 && completos.length === 0 && (
-          <p className="text-[13px] text-ink-2 px-1">No hay elementos cargados en esta zona.</p>
+          <p className="text-[14.5px] text-ink-2 font-medium px-1">No hay elementos cargados en esta zona.</p>
         )}
 
         <div>
-          <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
+          <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide mb-2.5 px-1">
             Actividad reciente
           </p>
           {reciente.length === 0 ? (
-            <p className="text-[13px] text-ink-2 px-1">Todavía no se registraron avances.</p>
+            <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registraron avances.</p>
           ) : (
             <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
               {reciente.map((a) => {
@@ -138,17 +138,17 @@ export function AvanceScreen() {
                 const zona = getZonaInfo(el.zona);
                 const style = CATEGORY_STYLES[el.categoria];
                 return (
-                  <div key={a.id} className="px-3.5 py-3 flex items-center gap-3">
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${style.bar}`} />
+                  <div key={a.id} className="px-3.5 py-3.5 flex items-center gap-3">
+                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${style.bar}`} />
                     <div className="flex-1 min-w-0">
-                      <p className="text-[14px] font-medium text-ink truncate">
+                      <p className="text-[15.5px] font-semibold text-ink truncate">
                         {el.nombre}{' '}
                         <span className="text-ink-2 font-normal">
                           · {cat.nombreSingular} · {formatNivel(el.altura)}
                           {zonaFiltro === 'todas' ? ` · ${zona.nombreCorto}` : ''}
                         </span>
                       </p>
-                      <p className="text-[12.5px] text-ink-2">
+                      <p className="text-[13.5px] text-ink-2 font-medium mt-0.5">
                         +{formatQty(a.cantidad, el.unidadMedida)} · {formatDate(a.fecha)}
                         {a.observaciones ? ` · ${a.observaciones}` : ''}
                       </p>
@@ -190,21 +190,21 @@ function SelectableRow({
   return (
     <button
       onClick={onClick}
-      className="w-full bg-surface rounded-2xl p-3 flex items-center gap-3 text-left active:bg-surface-2"
+      className="w-full bg-surface rounded-2xl p-3.5 flex items-center gap-3.5 text-left active:bg-surface-2"
     >
-      <PhotoThumb src={elemento.foto} sizeClass="w-12 h-12" />
+      <PhotoThumb src={elemento.foto} sizeClass="w-14 h-14" />
       <div className="flex-1 min-w-0">
-        <p className="text-[14.5px] font-semibold text-ink truncate">
+        <p className="text-[16px] font-bold text-ink truncate">
           {elemento.nombre}
-          <span className="text-ink-2 font-normal">
+          <span className="text-ink-2 font-medium">
             {' '}
             · {formatNivel(elemento.altura)}
             {showZona ? ` · ${zona.nombreCorto}` : ''}
           </span>
         </p>
-        <div className="flex items-center gap-2 mt-1">
-          <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-1.5" />
-          <span className="text-[12px] font-medium text-ink-2 shrink-0 tabular-nums">
+        <div className="flex items-center gap-2.5 mt-2">
+          <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-2" />
+          <span className="text-[13.5px] font-bold text-ink-2 shrink-0 tabular-nums">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
           </span>
         </div>
@@ -217,7 +217,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
   return (
     <button
       onClick={onClick}
-      className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium whitespace-nowrap ${
+      className={`px-4 py-2 rounded-full text-[15px] font-semibold whitespace-nowrap ${
         active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'
       }`}
     >

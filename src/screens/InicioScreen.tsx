@@ -8,6 +8,7 @@ import { useProject } from '../store/ProjectContext';
 import { CATEGORIAS, UNIDAD_LABELS, ZONAS, type UnidadMedida } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatNumber, formatPercent } from '../utils/format';
+import { ZONA_STYLES } from '../utils/zonaStyles';
 
 interface InicioScreenProps {
   onNavigate: (tab: Tab) => void;
@@ -99,24 +100,24 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
     <div>
       <Header title="EPET 24" subtitle="Avance de estructura de hormigón" />
 
-      <div className="px-5 py-4">
-        <div className="flex gap-3">
+      <div className="px-5 pt-5 pb-2">
+        <div className="grid grid-cols-2 gap-3.5">
           {resumen.porCategoria.map(({ cat, percent, porUnidad }) => {
             const style = CATEGORY_STYLES[cat.id];
             return (
               <div
                 key={cat.id}
-                className="flex-1 bg-surface rounded-3xl p-4 flex flex-col items-center text-center"
+                className={`rounded-[28px] p-5 flex flex-col items-center text-center ${style.bg50} ring-1 ring-white/[0.06]`}
               >
-                <ProgressRing percent={percent} size={80} strokeWidth={8} colorClass={style.ring}>
-                  <p className="text-[19px] font-bold text-ink leading-none">
+                <ProgressRing percent={percent} size={116} strokeWidth={11} colorClass={style.ring}>
+                  <p className="text-[34px] font-extrabold text-ink leading-none tabular-nums">
                     {formatPercent(percent)}
                   </p>
                 </ProgressRing>
-                <p className="text-[13px] font-semibold text-ink mt-2.5 leading-tight">
+                <p className="text-[17px] font-bold text-ink mt-3.5 leading-tight">
                   {cat.nombre}
                 </p>
-                <p className="text-[11.5px] text-ink-2 tabular-nums mt-0.5">
+                <p className="text-[13.5px] text-ink-2 tabular-nums mt-1 font-medium">
                   {[...porUnidad.entries()]
                     .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
                     .join(' · ')}
@@ -127,57 +128,61 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
         </div>
 
         {ultimoAvance && (
-          <p className="text-[12.5px] text-ink-2 text-center mt-3">
+          <p className="text-[13px] text-ink-2 text-center mt-4 font-medium">
             Último avance registrado el {formatDate(ultimoAvance.fecha)}
           </p>
         )}
       </div>
 
-      <div className="px-5 pb-4">
-        <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide mb-2 px-1">
+      <div className="px-5 pt-5 pb-4">
+        <p className="text-[15px] font-extrabold text-ink uppercase tracking-wide mb-3 px-1">
           Por zona
         </p>
-        <div className="space-y-2">
-          {resumen.porZona.map(({ zona, percent, porUnidad, items }) => (
-            <button
-              key={zona.id}
-              onClick={() => onNavigate('elementos')}
-              className="w-full bg-surface rounded-2xl p-4 flex items-center gap-4 active:bg-surface-2"
-            >
-              <ProgressRing percent={percent} size={52} strokeWidth={5} colorClass="text-accent">
-                <p className="text-[13px] font-bold text-ink leading-none">
-                  {formatPercent(percent)}
-                </p>
-              </ProgressRing>
-              <div className="flex-1 min-w-0 text-left">
-                <p className="text-[15px] font-semibold text-ink leading-tight">
-                  {zona.nombre}
-                </p>
-                <p className="text-[12.5px] text-ink-2 tabular-nums mt-0.5">
-                  {[...porUnidad.entries()]
-                    .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
-                    .join(' · ')}
-                  {' · '}
-                  {items} tipo{items === 1 ? '' : 's'}
-                </p>
-              </div>
-            </button>
-          ))}
+        <div className="space-y-3">
+          {resumen.porZona.map(({ zona, percent, porUnidad, items }) => {
+            const zstyle = ZONA_STYLES[zona.id];
+            return (
+              <button
+                key={zona.id}
+                onClick={() => onNavigate('elementos')}
+                className={`w-full rounded-[26px] p-4.5 flex items-center gap-4 active:brightness-110 ${zstyle.bg} ring-1 ring-white/[0.06]`}
+              >
+                <ProgressRing percent={percent} size={76} strokeWidth={8} colorClass={zstyle.ring}>
+                  <p className="text-[19px] font-extrabold text-ink leading-none tabular-nums">
+                    {formatPercent(percent)}
+                  </p>
+                </ProgressRing>
+                <div className="flex-1 min-w-0 text-left">
+                  <p className="text-[19px] font-bold text-ink leading-tight">
+                    {zona.nombre}
+                  </p>
+                  <p className="text-[14px] text-ink-2 tabular-nums mt-1 font-medium leading-snug">
+                    {[...porUnidad.entries()]
+                      .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
+                      .join(' · ')}
+                  </p>
+                  <p className="text-[13px] text-ink-3 mt-0.5">
+                    {items} tipo{items === 1 ? '' : 's'} de elemento
+                  </p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       <div className="px-5 pb-6">
         <button
           onClick={() => onNavigate('avance')}
-          className="w-full bg-accent rounded-2xl p-4 flex items-center justify-between active:bg-blue-600"
+          className="w-full bg-accent rounded-[26px] p-5 flex items-center justify-between active:bg-blue-600"
         >
           <div className="text-left">
-            <p className="text-white text-[15px] font-semibold">Registrar avance de hoy</p>
-            <p className="text-white/70 text-[12.5px] mt-0.5">
+            <p className="text-white text-[18px] font-bold">Registrar avance de hoy</p>
+            <p className="text-white/75 text-[13.5px] mt-0.5 font-medium">
               Marcá lo que se hormigonó en el día
             </p>
           </div>
-          <ArrowRight size={20} className="text-white shrink-0" />
+          <ArrowRight size={24} className="text-white shrink-0" />
         </button>
       </div>
     </div>

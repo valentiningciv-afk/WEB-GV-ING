@@ -9,6 +9,7 @@ import { Sheet } from '../components/ui/Sheet';
 import { useProject } from '../store/ProjectContext';
 import { CATEGORIAS, ZONAS, type Categoria, type ElementoEstructural, type Zona } from '../types';
 import { formatNivel } from '../utils/format';
+import { ZONA_STYLES } from '../utils/zonaStyles';
 
 type CategoriaFiltro = 'todas' | Categoria;
 type ZonaFiltro = 'todas' | Zona;
@@ -83,7 +84,7 @@ export function ElementosScreen() {
         }
       />
 
-      <div className="px-5 pt-3 overflow-x-auto">
+      <div className="px-5 pt-4 overflow-x-auto">
         <div className="flex gap-2 w-max">
           <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
           {ZONAS.map((z) => (
@@ -92,12 +93,13 @@ export function ElementosScreen() {
               active={zonaFiltro === z.id}
               onClick={() => setZonaFiltro(z.id)}
               label={z.nombre}
+              colorClass={ZONA_STYLES[z.id].bar}
             />
           ))}
         </div>
       </div>
 
-      <div className="px-5 pt-2 pb-1 overflow-x-auto">
+      <div className="px-5 pt-2.5 pb-1 overflow-x-auto">
         <div className="flex gap-2 w-max">
           <FilterChip subtle active={catFiltro === 'todas'} onClick={() => setCatFiltro('todas')} label="Todas" />
           {CATEGORIAS.map((c) => (
@@ -133,34 +135,42 @@ export function ElementosScreen() {
           description="No hay elementos que coincidan con estos filtros."
         />
       ) : (
-        <div className="px-5 py-3 space-y-7">
-          {grupos.map(({ zona, niveles }) => (
-            <div key={zona.id}>
-              <h2 className="text-[19px] font-bold text-ink mb-3 px-1">{zona.nombre}</h2>
-              <div className="space-y-5">
-                {niveles.map(({ altura, items }) => (
-                  <div key={altura}>
-                    <div className="flex items-center gap-2 mb-2 px-1">
-                      <p className="text-[13px] font-semibold text-ink-2 uppercase tracking-wide">
-                        Nivel {formatNivel(altura)}
-                      </p>
-                      <span className="text-[12px] text-ink-3">{items.length}</span>
+        <div className="px-5 py-4 space-y-8">
+          {grupos.map(({ zona, niveles }) => {
+            const zstyle = ZONA_STYLES[zona.id];
+            return (
+              <div key={zona.id}>
+                <div className={`flex items-center gap-2.5 mb-4 px-3.5 py-2.5 rounded-2xl ${zstyle.bg}`}>
+                  <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${zstyle.bar}`} />
+                  <h2 className={`text-[21px] font-extrabold leading-tight ${zstyle.text}`}>{zona.nombre}</h2>
+                </div>
+                <div className="space-y-6">
+                  {niveles.map(({ altura, items }) => (
+                    <div key={altura}>
+                      <div className="flex items-center gap-2 mb-2.5 px-1">
+                        <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide">
+                          Nivel {formatNivel(altura)}
+                        </p>
+                        <span className="text-[13px] font-semibold text-ink-3">
+                          · {items.length} elemento{items.length === 1 ? '' : 's'}
+                        </span>
+                      </div>
+                      <div className="space-y-2.5">
+                        {items.map((e) => (
+                          <ElementCard
+                            key={e.id}
+                            elemento={e}
+                            ejecutado={ejecutadoDe(e.id)}
+                            onClick={() => setDetail(e)}
+                          />
+                        ))}
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      {items.map((e) => (
-                        <ElementCard
-                          key={e.id}
-                          elemento={e}
-                          ejecutado={ejecutadoDe(e.id)}
-                          onClick={() => setDetail(e)}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
@@ -194,18 +204,21 @@ function FilterChip({
   onClick,
   label,
   subtle,
+  colorClass,
 }: {
   active: boolean;
   onClick: () => void;
   label: string;
   subtle?: boolean;
+  colorClass?: string;
 }) {
+  const activeClass = active ? (colorClass ? `${colorClass} text-white` : 'bg-white text-black') : 'bg-white/[0.08] text-ink-2';
   return (
     <button
       onClick={onClick}
       className={`rounded-full whitespace-nowrap ${
-        subtle ? 'px-3 py-1 text-[12px]' : 'px-3.5 py-1.5 text-[13px]'
-      } font-medium ${active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'}`}
+        subtle ? 'px-3.5 py-1.5 text-[13.5px]' : 'px-4 py-2 text-[15px]'
+      } font-semibold ${activeClass}`}
     >
       {label}
     </button>

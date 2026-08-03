@@ -5,6 +5,7 @@ import type { ElementoEstructural } from '../types';
 import { getCategoriaInfo, getZonaInfo } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
+import { ZONA_STYLES } from '../utils/zonaStyles';
 import { PhotoThumb } from './PhotoPicker';
 import { ProgressBar } from './ui/ProgressBar';
 import { Sheet } from './ui/Sheet';
@@ -29,74 +30,76 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
     .filter((a) => a.elementoId === elemento.id)
     .sort((a, b) => b.fecha.localeCompare(a.fecha));
 
+  const zstyle = ZONA_STYLES[elemento.zona];
+
   return (
     <Sheet open={!!elemento} onClose={onClose} title={elemento.nombre}>
       <PhotoThumb src={elemento.foto} sizeClass="w-full h-44 rounded-2xl" />
 
       <div className="mt-4 flex items-center gap-2 flex-wrap">
-        <span className={`text-[12px] font-semibold px-2.5 py-1 rounded-full ${style.chip}`}>
+        <span className={`text-[13px] font-bold px-3 py-1.5 rounded-full ${style.chip}`}>
           {cat.nombre}
         </span>
-        <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
+        <span className={`text-[13px] font-bold px-3 py-1.5 rounded-full ${zstyle.bg} ${zstyle.text}`}>
           {zona.nombre}
         </span>
-        <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full bg-white/[0.08] text-ink-2">
+        <span className="text-[13px] font-bold px-3 py-1.5 rounded-full bg-white/[0.08] text-ink-2">
           Nivel {formatNivel(elemento.altura)}
         </span>
       </div>
 
       <div className="mt-4 bg-surface rounded-2xl p-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-[13px] font-medium text-ink-2">Avance acumulado</p>
-          <p className="text-[15px] font-bold text-ink tabular-nums">
+        <div className="flex items-center justify-between mb-2.5">
+          <p className="text-[14.5px] font-semibold text-ink-2">Avance acumulado</p>
+          <p className="text-[17px] font-extrabold text-ink tabular-nums">
             {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
-            <span className="text-ink-2 font-normal"> · {formatPercent(percent)}</span>
+            <span className="text-ink-2 font-semibold"> · {formatPercent(percent)}</span>
           </p>
         </div>
-        <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-2.5" />
+        <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-3" />
       </div>
 
       <div className="mt-3 grid grid-cols-2 gap-3">
-        <div className="bg-surface rounded-2xl p-3.5">
-          <p className="text-[12px] text-ink-2 mb-0.5">Volumen unitario</p>
-          <p className="text-[16px] font-semibold text-ink">
+        <div className="bg-surface rounded-2xl p-4">
+          <p className="text-[13px] text-ink-2 font-medium mb-1">Volumen unitario</p>
+          <p className="text-[18px] font-bold text-ink">
             {formatNumber(elemento.volumen)} m³
           </p>
         </div>
-        <div className="bg-surface rounded-2xl p-3.5">
-          <p className="text-[12px] text-ink-2 mb-0.5">Nivel</p>
-          <p className="text-[16px] font-semibold text-ink">
+        <div className="bg-surface rounded-2xl p-4">
+          <p className="text-[13px] text-ink-2 font-medium mb-1">Nivel</p>
+          <p className="text-[18px] font-bold text-ink">
             {formatNivel(elemento.altura)}
           </p>
         </div>
       </div>
 
-      <div className="mt-3 bg-surface rounded-2xl p-3.5">
-        <p className="text-[12px] text-ink-2 mb-1">Material de encofrado</p>
-        <p className="text-[14.5px] text-ink leading-snug">
+      <div className="mt-3 bg-surface rounded-2xl p-4">
+        <p className="text-[13px] text-ink-2 font-medium mb-1.5">Material de encofrado</p>
+        <p className="text-[16px] text-ink font-medium leading-snug">
           {elemento.materialEncofrado || 'Sin especificar'}
         </p>
       </div>
 
       <div className="mt-5">
-        <p className="text-[13px] font-semibold text-ink-2 mb-2 px-1">
+        <p className="text-[15px] font-extrabold text-ink-2 mb-2.5 px-1">
           Historial de avance ({historial.length})
         </p>
         {historial.length === 0 ? (
-          <p className="text-[13px] text-ink-2 px-1">Todavía no se registró avance.</p>
+          <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registró avance.</p>
         ) : (
           <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
             {historial.map((a) => (
-              <div key={a.id} className="px-3.5 py-2.5 flex items-center justify-between gap-2">
+              <div key={a.id} className="px-3.5 py-3 flex items-center justify-between gap-2">
                 <div>
-                  <p className="text-[14px] font-medium text-ink">
+                  <p className="text-[15.5px] font-bold text-ink">
                     +{formatQty(a.cantidad, elemento.unidadMedida)}
                   </p>
                   {a.observaciones && (
-                    <p className="text-[12.5px] text-ink-2">{a.observaciones}</p>
+                    <p className="text-[13.5px] text-ink-2 font-medium">{a.observaciones}</p>
                   )}
                 </div>
-                <span className="text-[12.5px] text-ink-2 shrink-0">{formatDate(a.fecha)}</span>
+                <span className="text-[13.5px] text-ink-2 font-medium shrink-0">{formatDate(a.fecha)}</span>
               </div>
             ))}
           </div>
@@ -106,9 +109,9 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
       <div className="mt-6 flex gap-3 pb-4">
         <button
           onClick={() => onEdit(elemento)}
-          className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-surface-2 text-ink text-[14px] font-semibold active:bg-surface-3"
+          className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-surface-2 text-ink text-[15.5px] font-bold active:bg-surface-3"
         >
-          <Pencil size={16} /> Editar
+          <Pencil size={17} /> Editar
         </button>
         {confirmDelete ? (
           <button
@@ -116,16 +119,16 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
               deleteElemento(elemento.id);
               onClose();
             }}
-            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-red-500 text-white text-[14px] font-semibold active:bg-red-600"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-red-500 text-white text-[15.5px] font-bold active:bg-red-600"
           >
             Confirmar
           </button>
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl bg-red-500/15 text-red-400 text-[14px] font-semibold active:bg-red-500/25"
+            className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-red-500/15 text-red-400 text-[15.5px] font-bold active:bg-red-500/25"
           >
-            <Trash2 size={16} /> Eliminar
+            <Trash2 size={17} /> Eliminar
           </button>
         )}
       </div>
