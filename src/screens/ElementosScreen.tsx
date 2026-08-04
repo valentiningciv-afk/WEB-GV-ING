@@ -92,7 +92,6 @@ export function ElementosScreen() {
 
       <div className="px-5 pt-4 overflow-x-auto">
         <div className="flex gap-2 w-max">
-          <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
           {ZONAS.map((z) => (
             <FilterChip
               key={z.id}
@@ -102,6 +101,7 @@ export function ElementosScreen() {
               colorClass={ZONA_STYLES[z.id].bar}
             />
           ))}
+          <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
         </div>
       </div>
 
@@ -136,12 +136,13 @@ export function ElementosScreen() {
         />
       ) : grupos.length === 0 ? (
         <EmptyState
+          key={`${zonaFiltro}|${catFiltro}`}
           icon={Boxes}
           title="Sin resultados"
           description="No hay elementos que coincidan con estos filtros."
         />
       ) : (
-        <div className="px-5 py-4 space-y-8">
+        <div key={`${zonaFiltro}|${catFiltro}`} className="px-5 py-4 space-y-8 animate-fade-in">
           {grupos.map(({ zona, niveles }) => {
             const zstyle = ZONA_STYLES[zona.id];
             return (
@@ -225,7 +226,7 @@ function FilterChip({
   return (
     <button
       onClick={onClick}
-      className={`rounded-full whitespace-nowrap ${
+      className={`rounded-full whitespace-nowrap transition-colors duration-200 ${
         subtle ? 'px-3.5 py-1.5 text-[13.5px]' : 'px-4 py-2 text-[15px]'
       } font-semibold ${activeClass}`}
     >
