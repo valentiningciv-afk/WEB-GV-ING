@@ -93,6 +93,28 @@ button {
   animation: fade-in 0.2s ease-out;
 }
 
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Entrada en cascada usada al cambiar de filtro (zona/categoría): cada
+ * bloque anima con su propio animation-delay inline para que aparezcan
+ * escalonados en vez de todos a la vez. "both" mantiene el estado inicial
+ * durante el delay y el final al terminar. */
+.animate-fade-rise {
+  animation: fade-rise 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 ::-webkit-scrollbar {
   width: 0;
   height: 0;

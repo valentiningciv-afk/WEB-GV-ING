@@ -142,18 +142,26 @@ export function ElementosScreen() {
           description="No hay elementos que coincidan con estos filtros."
         />
       ) : (
-        <div key={`${zonaFiltro}|${catFiltro}`} className="px-5 py-4 space-y-8 animate-fade-in">
-          {grupos.map(({ zona, niveles }) => {
+        <div key={`${zonaFiltro}|${catFiltro}`} className="px-5 py-4 space-y-8">
+          {grupos.map(({ zona, niveles }, zonaIdx) => {
             const zstyle = ZONA_STYLES[zona.id];
+            const zonaDelay = zonaIdx * 70;
             return (
               <div key={zona.id}>
-                <div className={`flex items-center gap-2.5 mb-4 px-3.5 py-2.5 rounded-2xl ${zstyle.bg}`}>
+                <div
+                  className={`flex items-center gap-2.5 mb-4 px-3.5 py-2.5 rounded-2xl animate-fade-rise ${zstyle.bg}`}
+                  style={{ animationDelay: `${zonaDelay}ms` }}
+                >
                   <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${zstyle.bar}`} />
                   <h2 className={`text-[21px] font-extrabold leading-tight ${zstyle.text}`}>{zona.nombre}</h2>
                 </div>
                 <div className="space-y-6">
-                  {niveles.map(({ altura, items }) => (
-                    <div key={altura}>
+                  {niveles.map(({ altura, items }, nivelIdx) => (
+                    <div
+                      key={altura}
+                      className="animate-fade-rise"
+                      style={{ animationDelay: `${zonaDelay + (nivelIdx + 1) * 50}ms` }}
+                    >
                       <div className="flex items-center gap-2.5 mb-3 px-1">
                         <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/[0.1]">
                           <Layers size={17} className="text-ink-2" strokeWidth={2.3} />
