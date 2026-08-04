@@ -1,4 +1,4 @@
-import { Plus, Boxes } from 'lucide-react';
+import { Plus, Boxes, Layers } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { ElementCard } from '../components/ElementCard';
 import { ElementDetailSheet } from '../components/ElementDetailSheet';
@@ -13,6 +13,12 @@ import { ZONA_STYLES } from '../utils/zonaStyles';
 
 type CategoriaFiltro = 'todas' | Categoria;
 type ZonaFiltro = 'todas' | Zona;
+
+// Por ahora estas categorías no se cargan en el artifact — se ocultan del
+// filtro para no confundir mientras no formen parte del catálogo activo.
+const CATEGORIAS_VISIBLES = CATEGORIAS.filter(
+  (c) => c.id !== 'columna' && c.id !== 'columna_mensula',
+);
 
 export function ElementosScreen() {
   const { elementos, ejecutadoDe, addElemento, updateElemento } = useProject();
@@ -102,7 +108,7 @@ export function ElementosScreen() {
       <div className="px-5 pt-2.5 pb-1 overflow-x-auto">
         <div className="flex gap-2 w-max">
           <FilterChip subtle active={catFiltro === 'todas'} onClick={() => setCatFiltro('todas')} label="Todas" />
-          {CATEGORIAS.map((c) => (
+          {CATEGORIAS_VISIBLES.map((c) => (
             <FilterChip
               subtle
               key={c.id}
@@ -147,12 +153,15 @@ export function ElementosScreen() {
                 <div className="space-y-6">
                   {niveles.map(({ altura, items }) => (
                     <div key={altura}>
-                      <div className="flex items-center gap-2 mb-2.5 px-1">
-                        <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide">
-                          Nivel {formatNivel(altura)}
-                        </p>
-                        <span className="text-[13px] font-semibold text-ink-3">
-                          · {items.length} elemento{items.length === 1 ? '' : 's'}
+                      <div className="flex items-center gap-2.5 mb-3 px-1">
+                        <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/[0.1]">
+                          <Layers size={17} className="text-ink-2" strokeWidth={2.3} />
+                          <span className="text-[18px] font-extrabold text-ink tracking-tight">
+                            Nivel {formatNivel(altura)}
+                          </span>
+                        </span>
+                        <span className="text-[13.5px] font-semibold text-ink-3">
+                          {items.length} elemento{items.length === 1 ? '' : 's'}
                         </span>
                       </div>
                       <div className="space-y-2.5">
