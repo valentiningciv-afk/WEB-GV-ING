@@ -15,7 +15,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 4;
+export const SEED_VERSION = 5;
 
 interface SeedRow {
   zona: Zona;
@@ -26,6 +26,26 @@ interface SeedRow {
   unidadMedida: UnidadMedida;
   ejecutado?: number;
 }
+
+/**
+ * Avances puntuales informados con fecha propia (día a día), separados del
+ * "ejecutado" base de SEED_DATA porque ese representa el arranque del
+ * proyecto sin fecha conocida. Cada entrada se matchea contra SEED_DATA por
+ * zona + nivel + nombre.
+ */
+interface AvanceDiario {
+  zona: Zona;
+  nivel: number;
+  nombre: string;
+  cantidad: number;
+  fecha: string;
+  observaciones?: string;
+}
+
+const AVANCES_DIARIOS: AvanceDiario[] = [
+  { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', cantidad: 10, fecha: '2026-08-04' },
+  { zona: 'talleres', nivel: 2.2, nombre: 'VIT', cantidad: 10, fecha: '2026-08-04' },
+];
 
 const SEED_DATA: SeedRow[] = [
   // Ala de Aulas
@@ -99,6 +119,21 @@ export function createSeedAvances(elementosSembrados: ElementoEstructural[]): Av
       cantidad: item.ejecutado,
       fecha,
       observaciones: 'Avance informado al cargar el cómputo por zona',
+      creadoEn,
+    });
+  });
+
+  AVANCES_DIARIOS.forEach((diario, i) => {
+    const elemento = elementosSembrados.find(
+      (e) => e.zona === diario.zona && e.altura === diario.nivel && e.nombre === diario.nombre,
+    );
+    if (!elemento) return;
+    avances.push({
+      id: `seed-avance-diario-${i}-${elemento.id}`,
+      elementoId: elemento.id,
+      cantidad: diario.cantidad,
+      fecha: diario.fecha,
+      observaciones: diario.observaciones ?? '',
       creadoEn,
     });
   });
