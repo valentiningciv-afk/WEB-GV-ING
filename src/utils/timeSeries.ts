@@ -19,6 +19,7 @@ export function volumenPorFecha(
   const porFecha = new Map<string, DiaVolumen>();
 
   for (const a of avances) {
+    if (a.fechaAproximada) continue;
     const elemento = elementoById.get(a.elementoId);
     if (!elemento) continue;
     const volumen = a.cantidad * elemento.volumen;

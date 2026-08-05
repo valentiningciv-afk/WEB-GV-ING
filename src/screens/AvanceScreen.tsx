@@ -45,7 +45,7 @@ export function AvanceScreen() {
   const reciente = useMemo(
     () =>
       [...avances]
-        .filter((a) => idsZona.has(a.elementoId))
+        .filter((a) => idsZona.has(a.elementoId) && !a.fechaAproximada)
         .sort((a, b) => b.fecha.localeCompare(a.fecha) || b.creadoEn.localeCompare(a.creadoEn))
         .slice(0, 15),
     [avances, idsZona],

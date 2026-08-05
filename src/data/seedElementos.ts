@@ -15,7 +15,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 6;
+export const SEED_VERSION = 7;
 
 interface SeedRow {
   zona: Zona;
@@ -139,8 +139,9 @@ export function createSeedAvances(elementosSembrados: ElementoEstructural[]): Av
       elementoId: elemento.id,
       cantidad: item.ejecutado,
       fecha,
-      observaciones: 'Avance informado al cargar el cómputo por zona',
+      observaciones: 'Carga inicial del cómputo (fecha real no informada)',
       creadoEn,
+      fechaAproximada: true,
     });
   });
 

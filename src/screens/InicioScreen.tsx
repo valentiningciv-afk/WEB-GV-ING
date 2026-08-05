@@ -72,7 +72,10 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
   }, [elementos, ejecutadoDe]);
 
   const ultimoAvance = useMemo(
-    () => [...avances].sort((a, b) => b.fecha.localeCompare(a.fecha))[0],
+    () =>
+      [...avances]
+        .filter((a) => !a.fechaAproximada)
+        .sort((a, b) => b.fecha.localeCompare(a.fecha))[0],
     [avances],
   );
 

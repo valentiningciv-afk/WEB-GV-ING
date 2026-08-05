@@ -67,7 +67,7 @@ export function ReportesScreen() {
     const porFecha = new Map<string, { elementoId: string; cantidad: number; observaciones: string; id: string }[]>();
     const idsFiltrados = new Set(elementosFiltrados.map((e) => e.id));
     for (const a of avances) {
-      if (!idsFiltrados.has(a.elementoId)) continue;
+      if (!idsFiltrados.has(a.elementoId) || a.fechaAproximada) continue;
       const arr = porFecha.get(a.fecha) ?? [];
       arr.push(a);
       porFecha.set(a.fecha, arr);

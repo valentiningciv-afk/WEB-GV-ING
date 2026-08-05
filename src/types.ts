@@ -102,6 +102,11 @@ export interface AvanceEntry {
   fecha: string;
   observaciones: string;
   creadoEn: string;
+  /** true cuando "fecha" es un valor de relleno (se completó el cómputo con
+   * lo ya ejecutado a esa fecha, pero no se informó el día real en que se
+   * hormigonó). Estas entradas no deben graficarse en una línea de tiempo
+   * ni agruparse como si esa fecha fuera un dato real. */
+  fechaAproximada?: boolean;
 }
 
 export interface Proyecto {
