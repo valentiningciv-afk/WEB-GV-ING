@@ -9,6 +9,15 @@ export function formatDate(iso: string): string {
   });
 }
 
+/** Fecha corta para ejes de gráfico: "4 ago" o, en extenso, "4 de agosto". */
+export function formatDateShort(iso: string, extenso = false): string {
+  const d = new Date(iso + 'T00:00:00');
+  if (extenso) {
+    return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'long' });
+  }
+  return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }).replace('.', '');
+}
+
 export function todayISO(): string {
   const d = new Date();
   const tz = d.getTimezoneOffset() * 60000;

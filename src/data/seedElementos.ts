@@ -15,7 +15,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 5;
+export const SEED_VERSION = 6;
 
 interface SeedRow {
   zona: Zona;
@@ -26,6 +26,27 @@ interface SeedRow {
   unidadMedida: UnidadMedida;
   ejecutado?: number;
 }
+
+/**
+ * Volumen unitario (m³) por tipo de elemento — para vigas es m³ por unidad,
+ * para losas es el espesor en metros (que multiplicado por los m² vertidos
+ * da m³, ya que "volumen" se interpreta siempre como "m³ por unidad de
+ * unidadMedida"). Mismo valor para todas las zonas/niveles de un tipo.
+ */
+const VOLUMEN_POR_NOMBRE: Record<string, number> = {
+  VIT: 0.47,
+  VE: 0.22,
+  'VEL 1': 0.42,
+  'VEL 2': 0.5,
+  'VI 2': 0.47,
+  'VI 3': 0.29,
+  'VI 4': 0.25,
+  'VI 5': 0.29,
+  'VI 6': 0.54,
+  'VI 7': 0.32,
+  'Losa 1': 0.15,
+  'Losa 2': 0.2,
+};
 
 /**
  * Avances puntuales informados con fecha propia (día a día), separados del
@@ -98,7 +119,7 @@ export function createSeedElementos(): ElementoEstructural[] {
     cantidad: item.cantidad,
     unidadMedida: item.unidadMedida,
     foto: null,
-    volumen: 0,
+    volumen: VOLUMEN_POR_NOMBRE[item.nombre] ?? 0,
     altura: item.nivel,
     materialEncofrado: '',
     creadoEn,

@@ -1,5 +1,7 @@
 import { CalendarCheck, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { CumulativeAreaChart } from '../components/charts/CumulativeAreaChart';
+import { VolumeBarChart } from '../components/charts/VolumeBarChart';
 import { Header } from '../components/Header';
 import { PhotoThumb } from '../components/PhotoPicker';
 import { RegisterAvanceSheet } from '../components/RegisterAvanceSheet';
@@ -10,13 +12,19 @@ import type { ElementoEstructural, Zona } from '../types';
 import { getCategoriaInfo, getZonaInfo, ZONAS } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
 import { formatDate, formatNivel, formatQty } from '../utils/format';
+import { acumuladoPorFecha, volumenPorFecha } from '../utils/timeSeries';
 
 type ZonaFiltro = 'todas' | Zona;
+type ChartMode = 'diario' | 'acumulado';
 
 export function AvanceScreen() {
   const { elementos, avances, ejecutadoDe, deleteAvance } = useProject();
   const [selected, setSelected] = useState<ElementoEstructural | null>(null);
   const [zonaFiltro, setZonaFiltro] = useState<ZonaFiltro>('todas');
+  const [chartMode, setChartMode] = useState<ChartMode>('diario');
+
+  const dias = useMemo(() => volumenPorFecha(avances, elementos), [avances, elementos]);
+  const acumulado = useMemo(() => acumuladoPorFecha(dias), [dias]);
 
   const elementosZona = useMemo(
     () => (zonaFiltro === 'todas' ? elementos : elementos.filter((e) => e.zona === zonaFiltro)),
@@ -64,19 +72,43 @@ export function AvanceScreen() {
 
   return (
     <div>
-      <Header title="Avance" subtitle="Tocá un elemento para registrar lo hormigonado" />
+      <Header title="Avance" subtitle="Evolución del hormigonado y registro diario" />
 
-      <div className="px-5 pt-3 pb-1 overflow-x-auto">
-        <div className="flex gap-2 w-max">
-          <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
-          {ZONAS.map((z) => (
-            <FilterChip
-              key={z.id}
-              active={zonaFiltro === z.id}
-              onClick={() => setZonaFiltro(z.id)}
-              label={z.nombre}
-            />
-          ))}
+      <div className="px-5 pt-4">
+        <div className="flex gap-2 mb-3.5">
+          <FilterChip active={chartMode === 'diario'} onClick={() => setChartMode('diario')} label="Por día" />
+          <FilterChip active={chartMode === 'acumulado'} onClick={() => setChartMode('acumulado')} label="Acumulado" />
+        </div>
+
+        {dias.length === 0 ? (
+          <div className="bg-surface rounded-2xl py-8 px-5 text-center">
+            <p className="text-[14.5px] text-ink-2 font-medium">
+              Todavía no hay avances registrados para graficar.
+            </p>
+          </div>
+        ) : chartMode === 'diario' ? (
+          <VolumeBarChart data={dias} />
+        ) : (
+          <CumulativeAreaChart data={acumulado} />
+        )}
+      </div>
+
+      <div className="px-5 pt-7 pb-1">
+        <p className="text-[15px] font-extrabold text-ink uppercase tracking-wide mb-3 px-1">
+          Registrar avance
+        </p>
+        <div className="overflow-x-auto -mx-5 px-5">
+          <div className="flex gap-2 w-max">
+            <FilterChip active={zonaFiltro === 'todas'} onClick={() => setZonaFiltro('todas')} label="Todas las zonas" />
+            {ZONAS.map((z) => (
+              <FilterChip
+                key={z.id}
+                active={zonaFiltro === z.id}
+                onClick={() => setZonaFiltro(z.id)}
+                label={z.nombre}
+              />
+            ))}
+          </div>
         </div>
       </div>
 
