@@ -19,4 +19,4 @@ export function Field({ label, children, hint }: FieldProps) {
 }
 
 export const inputClass =
-  'w-full rounded-xl bg-surface-2 px-3.5 py-3 text-[16px] text-ink placeholder:text-ink-3 outline-none ring-1 ring-white/[0.08] focus:ring-2 focus:ring-accent';
+  'w-full rounded-xl bg-surface-2 px-3.5 py-3 text-[16px] text-ink placeholder:text-ink-3 outline-none ring-1 ring-veil/[0.08] focus:ring-2 focus:ring-accent';

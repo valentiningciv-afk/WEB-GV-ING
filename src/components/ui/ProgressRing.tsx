@@ -12,7 +12,7 @@ export function ProgressRing({
   size = 84,
   strokeWidth = 9,
   colorClass,
-  trackClass = 'text-white/[0.1]',
+  trackClass = 'text-veil/[0.1]',
   children,
 }: ProgressRingProps) {
   const clamped = Math.max(0, Math.min(100, percent));

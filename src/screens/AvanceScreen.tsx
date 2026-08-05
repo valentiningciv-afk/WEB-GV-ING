@@ -130,7 +130,7 @@ export function AvanceScreen() {
           {reciente.length === 0 ? (
             <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registraron avances.</p>
           ) : (
-            <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
+            <div className="bg-surface rounded-2xl divide-y divide-veil/[0.07] overflow-hidden">
               {reciente.map((a) => {
                 const el = elementoById.get(a.elementoId);
                 if (!el) return null;
@@ -155,7 +155,7 @@ export function AvanceScreen() {
                     </div>
                     <button
                       onClick={() => deleteAvance(a.id)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-3 active:bg-white/[0.06] shrink-0"
+                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-3 active:bg-veil/[0.06] shrink-0"
                       aria-label="Eliminar registro"
                     >
                       <Trash2 size={16} />
@@ -218,7 +218,7 @@ function FilterChip({ active, onClick, label }: { active: boolean; onClick: () =
     <button
       onClick={onClick}
       className={`px-4 py-2 rounded-full text-[15px] font-semibold whitespace-nowrap ${
-        active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'
+        active ? 'bg-ink text-app' : 'bg-veil/[0.08] text-ink-2'
       }`}
     >
       {label}

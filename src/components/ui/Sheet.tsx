@@ -27,7 +27,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
         onClick={onClose}
       />
       <div className="relative w-full max-w-lg max-h-[92svh] bg-surface rounded-t-[28px] shadow-2xl animate-sheet-up flex flex-col">
-        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-white/[0.08] shrink-0">
+        <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-veil/[0.08] shrink-0">
           <div className="w-9" />
           <h2 className="text-[17px] font-semibold text-ink">{title}</h2>
           <button
@@ -40,7 +40,7 @@ export function Sheet({ open, onClose, title, children, footer }: SheetProps) {
         </div>
         <div className="overflow-y-auto px-5 py-4 flex-1">{children}</div>
         {footer && (
-          <div className="px-5 py-3 border-t border-white/[0.08] shrink-0 bg-surface pb-[calc(env(safe-area-inset-bottom)+12px)]">
+          <div className="px-5 py-3 border-t border-veil/[0.08] shrink-0 bg-surface pb-[calc(env(safe-area-inset-bottom)+12px)]">
             {footer}
           </div>
         )}

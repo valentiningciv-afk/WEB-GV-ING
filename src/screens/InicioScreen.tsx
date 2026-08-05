@@ -2,6 +2,7 @@ import { ArrowRight, HardHat } from 'lucide-react';
 import { useMemo } from 'react';
 import type { Tab } from '../App';
 import { Header } from '../components/Header';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressRing } from '../components/ui/ProgressRing';
 import { useProject } from '../store/ProjectContext';
@@ -78,7 +79,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
   if (elementos.length === 0) {
     return (
       <div>
-        <Header title="EPET 24" subtitle="Estructura de hormigón" />
+        <Header title="EPET 24" subtitle="Estructura de hormigón" action={<ThemeToggle />} />
         <EmptyState
           icon={HardHat}
           title="Empecemos"
@@ -98,7 +99,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
 
   return (
     <div>
-      <Header title="EPET 24" subtitle="Avance de estructura de hormigón" />
+      <Header title="EPET 24" subtitle="Avance de estructura de hormigón" action={<ThemeToggle />} />
 
       <div className="px-5 pt-5 pb-2">
         <div className="grid grid-cols-2 gap-3.5">
@@ -107,7 +108,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
             return (
               <div
                 key={cat.id}
-                className={`rounded-[28px] p-5 flex flex-col items-center text-center ${style.bg50} ring-1 ring-white/[0.06]`}
+                className={`rounded-[28px] p-5 flex flex-col items-center text-center ${style.bg50} ring-1 ring-veil/[0.06]`}
               >
                 <ProgressRing percent={percent} size={116} strokeWidth={11} colorClass={style.ring}>
                   <p className="text-[34px] font-extrabold text-ink leading-none tabular-nums">
@@ -145,7 +146,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
               <button
                 key={zona.id}
                 onClick={() => onNavigate('elementos')}
-                className={`w-full rounded-[26px] p-4.5 flex items-center gap-4 active:brightness-110 ${zstyle.bg} ring-1 ring-white/[0.06]`}
+                className={`w-full rounded-[26px] p-4.5 flex items-center gap-4 active:brightness-110 ${zstyle.bg} ring-1 ring-veil/[0.06]`}
               >
                 <ProgressRing percent={percent} size={76} strokeWidth={8} colorClass={zstyle.ring}>
                   <p className="text-[19px] font-extrabold text-ink leading-none tabular-nums">

@@ -24,7 +24,7 @@ export function PhotoPicker({ value, onChange }: PhotoPickerProps) {
 
   if (value) {
     return (
-      <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-2 ring-1 ring-white/[0.08]">
+      <div className="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-surface-2 ring-1 ring-veil/[0.08]">
         <img src={value} alt="Sección del elemento" className="w-full h-full object-cover" />
         <button
           type="button"
@@ -58,7 +58,7 @@ export function PhotoPicker({ value, onChange }: PhotoPickerProps) {
       type="button"
       onClick={() => inputRef.current?.click()}
       disabled={loading}
-      className="w-full aspect-[4/3] rounded-2xl bg-surface-2 ring-1 ring-white/[0.08] flex flex-col items-center justify-center gap-2 text-ink-2 active:bg-surface-3"
+      className="w-full aspect-[4/3] rounded-2xl bg-surface-2 ring-1 ring-veil/[0.08] flex flex-col items-center justify-center gap-2 text-ink-2 active:bg-surface-3"
     >
       {loading ? (
         <span className="text-[13px]">Procesando…</span>
@@ -94,7 +94,7 @@ export function PhotoThumb({ src, sizeClass = 'w-14 h-14' }: { src: string | nul
     <img
       src={src}
       alt=""
-      className={`${sizeClass} rounded-xl object-cover shrink-0 ring-1 ring-white/[0.08]`}
+      className={`${sizeClass} rounded-xl object-cover shrink-0 ring-1 ring-veil/[0.08]`}
     />
   );
 }

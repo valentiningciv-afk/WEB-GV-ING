@@ -15,7 +15,7 @@ const ITEMS: { id: Tab; label: string; icon: typeof Home }[] = [
 
 export function BottomNav({ active, onChange }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-xl border-t border-white/[0.08] pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-app/80 backdrop-blur-xl border-t border-veil/[0.08] pb-[env(safe-area-inset-bottom)] transition-colors duration-300">
       <div className="max-w-lg mx-auto grid grid-cols-4">
         {ITEMS.map((item) => {
           const isActive = item.id === active;

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BottomNav } from './components/BottomNav';
 import { ProjectProvider } from './store/ProjectContext';
+import { ThemeProvider } from './store/ThemeContext';
 import { InicioScreen } from './screens/InicioScreen';
 import { ElementosScreen } from './screens/ElementosScreen';
 import { AvanceScreen } from './screens/AvanceScreen';
@@ -28,9 +29,11 @@ function AppShell() {
 
 function App() {
   return (
-    <ProjectProvider>
-      <AppShell />
-    </ProjectProvider>
+    <ThemeProvider>
+      <ProjectProvider>
+        <AppShell />
+      </ProjectProvider>
+    </ThemeProvider>
   );
 }
 

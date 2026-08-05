@@ -26,11 +26,43 @@
   --color-ink-2: #98989d;
   --color-ink-3: #636366;
   --color-accent: #0a84ff;
+
+  /* Overlay neutro usado para bordes/chips/tracks sutiles sobre las
+   * superficies — blanco en oscuro, negro en claro (ver [data-theme=light]). */
+  --color-veil: #ffffff;
 }
 
 :root {
   color-scheme: dark;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Modo claro: se pisan los mismos tokens de color, así que cualquier
+ * utilidad de Tailwind que ya los use (bg-app, text-ink, bg-viga/15, etc.)
+ * se re-tematiza sola sin tocar cada componente. */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-viga: #007aff; /* systemBlue light */
+  --color-losa: #34c759; /* systemGreen light */
+  --color-columna: #ff9500; /* systemOrange light */
+  --color-mensula: #af52de; /* systemPurple light */
+  --color-antepecho: #30b0c7; /* systemTeal light */
+
+  --color-aulas: #32ade6; /* systemCyan light */
+  --color-talleres: #ff2d55; /* systemPink light */
+  --color-zona3: #ffcc00; /* systemYellow light */
+
+  --color-app: #f2f2f7;
+  --color-surface: #ffffff;
+  --color-surface-2: #eeeef1;
+  --color-surface-3: #dcdce1;
+  --color-ink: #000000;
+  --color-ink-2: #6b6b70;
+  --color-ink-3: #b8b8bd;
+  --color-accent: #007aff;
+
+  --color-veil: #000000;
 }
 
 html,
@@ -41,10 +73,11 @@ body,
 
 body {
   margin: 0;
-  background: #000000;
+  background: var(--color-app);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   overscroll-behavior-y: none;
+  transition: background-color 0.25s ease-out;
 }
 
 * {

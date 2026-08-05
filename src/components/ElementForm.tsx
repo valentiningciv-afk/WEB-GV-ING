@@ -121,7 +121,7 @@ export function ElementForm({ initial, onSubmit, formId }: ElementFormProps) {
 
       <Field label={unidadMedida === 'u' ? 'Cantidad total en esta zona' : 'Superficie total en esta zona (m²)'}>
         {unidadMedida === 'u' ? (
-          <div className="bg-surface rounded-xl ring-1 ring-white/[0.08] px-3.5 py-2.5 flex justify-center">
+          <div className="bg-surface rounded-xl ring-1 ring-veil/[0.08] px-3.5 py-2.5 flex justify-center">
             <Stepper value={cantidad} onChange={setCantidad} min={1} />
           </div>
         ) : (

@@ -163,7 +163,7 @@ export function ElementosScreen() {
                       style={{ animationDelay: `${zonaDelay + (nivelIdx + 1) * 50}ms` }}
                     >
                       <div className="flex items-center gap-2.5 mb-3 px-1">
-                        <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/[0.1]">
+                        <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-veil/[0.1]">
                           <Layers size={17} className="text-ink-2" strokeWidth={2.3} />
                           <span className="text-[18px] font-extrabold text-ink tracking-tight">
                             Nivel {formatNivel(altura)}
@@ -230,7 +230,7 @@ function FilterChip({
   subtle?: boolean;
   colorClass?: string;
 }) {
-  const activeClass = active ? (colorClass ? `${colorClass} text-white` : 'bg-white text-black') : 'bg-white/[0.08] text-ink-2';
+  const activeClass = active ? (colorClass ? `${colorClass} text-white` : 'bg-ink text-app') : 'bg-veil/[0.08] text-ink-2';
   return (
     <button
       onClick={onClick}

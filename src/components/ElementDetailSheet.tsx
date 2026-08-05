@@ -43,7 +43,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
         <span className={`text-[13px] font-bold px-3 py-1.5 rounded-full ${zstyle.bg} ${zstyle.text}`}>
           {zona.nombre}
         </span>
-        <span className="text-[13px] font-bold px-3 py-1.5 rounded-full bg-white/[0.08] text-ink-2">
+        <span className="text-[13px] font-bold px-3 py-1.5 rounded-full bg-veil/[0.08] text-ink-2">
           Nivel {formatNivel(elemento.altura)}
         </span>
       </div>
@@ -88,7 +88,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
         {historial.length === 0 ? (
           <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registró avance.</p>
         ) : (
-          <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
+          <div className="bg-surface rounded-2xl divide-y divide-veil/[0.07] overflow-hidden">
             {historial.map((a) => (
               <div key={a.id} className="px-3.5 py-3 flex items-center justify-between gap-2">
                 <div>

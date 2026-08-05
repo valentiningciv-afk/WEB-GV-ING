@@ -152,7 +152,7 @@ export function ReportesScreen() {
         {elementosFiltrados.length === 0 ? (
           <p className="text-[14.5px] text-ink-2 font-medium px-1">Sin elementos con estos filtros.</p>
         ) : (
-          <div className="bg-surface rounded-2xl divide-y divide-white/[0.07] overflow-hidden">
+          <div className="bg-surface rounded-2xl divide-y divide-veil/[0.07] overflow-hidden">
             {elementosFiltrados.map((e) => {
               const ejecutado = ejecutadoDe(e.id);
               const percent = e.cantidad > 0 ? (ejecutado / e.cantidad) * 100 : 0;
@@ -205,7 +205,7 @@ export function ReportesScreen() {
               }
               return (
                 <div key={fecha} className="bg-surface rounded-2xl overflow-hidden">
-                  <div className="px-3.5 py-3 bg-white/[0.04] flex items-center justify-between gap-2">
+                  <div className="px-3.5 py-3 bg-veil/[0.04] flex items-center justify-between gap-2">
                     <p className="text-[14.5px] font-bold text-ink">{formatDate(fecha)}</p>
                     <p className="text-[13px] text-ink-2 font-semibold tabular-nums">
                       {[...totalesPorUnidad.entries()]
@@ -213,7 +213,7 @@ export function ReportesScreen() {
                         .join(' · ')}
                     </p>
                   </div>
-                  <div className="divide-y divide-white/[0.07]">
+                  <div className="divide-y divide-veil/[0.07]">
                     {entradas.map((a) => {
                       const el = elementoById.get(a.elementoId);
                       if (!el) return null;
@@ -264,7 +264,7 @@ function FilterChip({
       onClick={onClick}
       className={`rounded-full whitespace-nowrap ${
         subtle ? 'px-3.5 py-1.5 text-[13.5px]' : 'px-4 py-2 text-[15px]'
-      } font-semibold ${active ? 'bg-white text-black' : 'bg-white/[0.08] text-ink-2'}`}
+      } font-semibold ${active ? 'bg-ink text-app' : 'bg-veil/[0.08] text-ink-2'}`}
     >
       {label}
     </button>
