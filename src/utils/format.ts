@@ -18,6 +18,19 @@ export function formatDateShort(iso: string, extenso = false): string {
   return d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }).replace('.', '');
 }
 
+function capitalizeFirst(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+/** Formatea un mes 'YYYY-MM': "Ago 2026" o, en extenso, "Agosto 2026". */
+export function formatMonth(yyyyMm: string, extenso = false): string {
+  const d = new Date(`${yyyyMm}-01T00:00:00`);
+  if (extenso) {
+    return capitalizeFirst(d.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' }));
+  }
+  return capitalizeFirst(d.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' }).replace('.', ''));
+}
+
 export function todayISO(): string {
   const d = new Date();
   const tz = d.getTimezoneOffset() * 60000;

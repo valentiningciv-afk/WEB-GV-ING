@@ -107,6 +107,10 @@ export interface AvanceEntry {
    * hormigonó). Estas entradas no deben graficarse en una línea de tiempo
    * ni agruparse como si esa fecha fuera un dato real. */
   fechaAproximada?: boolean;
+  /** 'dia' (default si no está) cuando se conoce el día exacto informado;
+   * 'mes' cuando solo se sabe en qué mes se hormigonó y "fecha" usa el día 1
+   * de ese mes como convención. */
+  precision?: 'dia' | 'mes';
 }
 
 export interface Proyecto {

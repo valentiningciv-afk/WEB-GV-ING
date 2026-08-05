@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import type { PuntoAcumulado } from '../../utils/timeSeries';
-import { formatDateShort, formatNumber } from '../../utils/format';
+import type { PuntoAcumuladoMes } from '../../utils/timeSeries';
+import { formatMonth, formatNumber } from '../../utils/format';
 
 interface CumulativeAreaChartProps {
-  data: PuntoAcumulado[];
+  data: PuntoAcumuladoMes[];
 }
 
 const CHART_HEIGHT = 176;
@@ -43,7 +43,7 @@ export function CumulativeAreaChart({ data }: CumulativeAreaChartProps) {
   return (
     <div className="bg-surface rounded-2xl p-4">
       <div className="flex items-baseline justify-between mb-1">
-        <p className="text-[15px] font-bold text-ink">Volumen acumulado</p>
+        <p className="text-[15px] font-bold text-ink">Vigas aéreas — m³ acumulados</p>
         <span className="text-[12.5px] font-semibold text-ink-3">m³</span>
       </div>
 
@@ -66,9 +66,9 @@ export function CumulativeAreaChart({ data }: CumulativeAreaChartProps) {
 
         {points.map((p, i) => (
           <button
-            key={p.d.fecha}
+            key={p.d.mes}
             onClick={() => setSelected(selected === i ? null : i)}
-            aria-label={`${formatDateShort(p.d.fecha, true)}: ${formatNumber(p.d.acumulado)} m³ acumulados`}
+            aria-label={`${formatMonth(p.d.mes, true)}: ${formatNumber(p.d.acumulado)} m³ acumulados`}
             className="absolute w-7 h-7 -ml-3.5 -mt-3.5 rounded-full"
             style={{ left: `${p.x}%`, top: `${p.y}%` }}
           />
@@ -78,9 +78,11 @@ export function CumulativeAreaChart({ data }: CumulativeAreaChartProps) {
       <div className="flex justify-between mt-1">
         {data.length > 0 && (
           <>
-            <span className="text-[11px] font-semibold text-ink-3">{formatDateShort(data[0].fecha)}</span>
+            <span className="text-[11.5px] font-semibold text-ink-3">{formatMonth(data[0].mes)}</span>
             {data.length > 1 && (
-              <span className="text-[11px] font-semibold text-ink-3">{formatDateShort(data[data.length - 1].fecha)}</span>
+              <span className="text-[11.5px] font-semibold text-ink-3">
+                {formatMonth(data[data.length - 1].mes)}
+              </span>
             )}
           </>
         )}
@@ -95,15 +97,17 @@ export function CumulativeAreaChart({ data }: CumulativeAreaChartProps) {
   );
 }
 
-function PuntoTooltip({ punto, previo }: { punto: PuntoAcumulado; previo: PuntoAcumulado | null }) {
+function PuntoTooltip({ punto, previo }: { punto: PuntoAcumuladoMes; previo: PuntoAcumuladoMes | null }) {
   return (
     <div className="bg-surface-3 rounded-2xl shadow-lg ring-1 ring-veil/[0.1] p-3.5 text-left">
-      <p className="text-[12.5px] font-bold text-ink-2">{formatDateShort(punto.fecha, true)}</p>
+      <p className="text-[12.5px] font-bold text-ink-2">{formatMonth(punto.mes, true)}</p>
       <p className="text-[22px] font-extrabold text-ink tabular-nums leading-tight mt-0.5">
         {formatNumber(punto.acumulado)} <span className="text-[13px] font-bold text-ink-2">m³</span>
       </p>
       {previo && (
-        <p className="text-[12px] text-losa font-bold mt-0.5">+{formatNumber(punto.acumulado - previo.acumulado)} m³ ese día</p>
+        <p className="text-[12px] text-losa font-bold mt-0.5">
+          +{formatNumber(punto.acumulado - previo.acumulado)} m³ ese mes
+        </p>
       )}
     </div>
   );

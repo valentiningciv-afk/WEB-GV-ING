@@ -4,9 +4,6 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * Cómputo real del proyecto EPET 24, desglosado por zona (frente de avance)
  * y nivel — según planilla "Vigas por ala y sector". El campo "altura" se
  * reutiliza como nivel (2.20 = nivel +2,20).
- *
- * "ejecutado" es la cantidad ya hormigonada informada a la fecha de esta
- * carga; se registra como un único avance de arranque por elemento.
  */
 
 /**
@@ -15,7 +12,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 7;
+export const SEED_VERSION = 8;
 
 interface SeedRow {
   zona: Zona;
@@ -24,7 +21,6 @@ interface SeedRow {
   categoria: Categoria;
   cantidad: number;
   unidadMedida: UnidadMedida;
-  ejecutado?: number;
 }
 
 /**
@@ -49,29 +45,37 @@ const VOLUMEN_POR_NOMBRE: Record<string, number> = {
 };
 
 /**
- * Avances puntuales informados con fecha propia (día a día), separados del
- * "ejecutado" base de SEED_DATA porque ese representa el arranque del
- * proyecto sin fecha conocida. Cada entrada se matchea contra SEED_DATA por
- * zona + nivel + nombre.
+ * Avances cargados hasta ahora. Cada entrada se matchea contra SEED_DATA por
+ * zona + nivel + nombre. "precision" indica si "fecha" es un día exacto
+ * informado o solo se conoce el mes (en ese caso "fecha" usa el día 1 del
+ * mes como convención, y se agrupa/gráfica por mes).
  */
-interface AvanceDiario {
+interface AvanceCargado {
   zona: Zona;
   nivel: number;
   nombre: string;
   cantidad: number;
   fecha: string;
+  precision: 'dia' | 'mes';
   observaciones?: string;
 }
 
-const AVANCES_DIARIOS: AvanceDiario[] = [
-  { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', cantidad: 10, fecha: '2026-08-04' },
-  { zona: 'talleres', nivel: 2.2, nombre: 'VIT', cantidad: 10, fecha: '2026-08-04' },
+const AVANCES_CARGADOS: AvanceCargado[] = [
+  // Junio: vigas de Zona 3
+  { zona: 'zona3', nivel: 2.2, nombre: 'VEL 1', cantidad: 16, fecha: '2026-06-01', precision: 'mes' },
+  { zona: 'zona3', nivel: 2.2, nombre: 'VIT', cantidad: 15, fecha: '2026-06-01', precision: 'mes' },
+  // Julio: vigas de Ala de Aulas
+  { zona: 'aulas', nivel: 2.2, nombre: 'VEL 1', cantidad: 40, fecha: '2026-07-01', precision: 'mes' },
+  { zona: 'aulas', nivel: 2.2, nombre: 'VIT', cantidad: 38, fecha: '2026-07-01', precision: 'mes' },
+  // Agosto: vigas de Ala de Talleres
+  { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', cantidad: 10, fecha: '2026-08-04', precision: 'dia' },
+  { zona: 'talleres', nivel: 2.2, nombre: 'VIT', cantidad: 10, fecha: '2026-08-04', precision: 'dia' },
 ];
 
 const SEED_DATA: SeedRow[] = [
   // Ala de Aulas
-  { zona: 'aulas', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u', ejecutado: 40 },
-  { zona: 'aulas', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u', ejecutado: 38 },
+  { zona: 'aulas', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 40, unidadMedida: 'u' },
+  { zona: 'aulas', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 2.2, nombre: 'VE', categoria: 'viga_aerea', cantidad: 31, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
   { zona: 'aulas', nivel: 4.25, nombre: 'VI 3', categoria: 'viga_aerea', cantidad: 38, unidadMedida: 'u' },
@@ -90,8 +94,8 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'talleres', nivel: 6.35, nombre: 'Losa 1', categoria: 'losa', cantidad: 293, unidadMedida: 'm2' },
 
   // Zona 3
-  { zona: 'zona3', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 36, unidadMedida: 'u', ejecutado: 16 },
-  { zona: 'zona3', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 19, unidadMedida: 'u', ejecutado: 15 },
+  { zona: 'zona3', nivel: 2.2, nombre: 'VEL 1', categoria: 'viga_aerea', cantidad: 36, unidadMedida: 'u' },
+  { zona: 'zona3', nivel: 2.2, nombre: 'VIT', categoria: 'viga_aerea', cantidad: 19, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 2.2, nombre: 'VE', categoria: 'viga_aerea', cantidad: 87, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 12, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 4.25, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 104, unidadMedida: 'u' },
@@ -127,38 +131,23 @@ export function createSeedElementos(): ElementoEstructural[] {
 }
 
 export function createSeedAvances(elementosSembrados: ElementoEstructural[]): AvanceEntry[] {
-  const fecha = new Date().toISOString().slice(0, 10);
   const creadoEn = new Date().toISOString();
+
   const avances: AvanceEntry[] = [];
-
-  SEED_DATA.forEach((item, i) => {
-    if (!item.ejecutado) return;
-    const elemento = elementosSembrados[i];
-    avances.push({
-      id: `seed-avance-${elemento.id}`,
-      elementoId: elemento.id,
-      cantidad: item.ejecutado,
-      fecha,
-      observaciones: 'Carga inicial del cómputo (fecha real no informada)',
-      creadoEn,
-      fechaAproximada: true,
-    });
-  });
-
-  AVANCES_DIARIOS.forEach((diario, i) => {
+  AVANCES_CARGADOS.forEach((carga, i) => {
     const elemento = elementosSembrados.find(
-      (e) => e.zona === diario.zona && e.altura === diario.nivel && e.nombre === diario.nombre,
+      (e) => e.zona === carga.zona && e.altura === carga.nivel && e.nombre === carga.nombre,
     );
     if (!elemento) return;
     avances.push({
-      id: `seed-avance-diario-${i}-${elemento.id}`,
+      id: `seed-avance-${i}-${elemento.id}`,
       elementoId: elemento.id,
-      cantidad: diario.cantidad,
-      fecha: diario.fecha,
-      observaciones: diario.observaciones ?? '',
+      cantidad: carga.cantidad,
+      fecha: carga.fecha,
+      precision: carga.precision,
+      observaciones: carga.observaciones ?? '',
       creadoEn,
     });
   });
-
   return avances;
 }

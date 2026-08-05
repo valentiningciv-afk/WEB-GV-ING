@@ -1,4 +1,4 @@
-import { CalendarCheck, Trash2 } from 'lucide-react';
+import { CalendarCheck, Trash2, TrendingUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { CumulativeAreaChart } from '../components/charts/CumulativeAreaChart';
 import { VolumeBarChart } from '../components/charts/VolumeBarChart';
@@ -11,20 +11,21 @@ import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural, Zona } from '../types';
 import { getCategoriaInfo, getZonaInfo, ZONAS } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNivel, formatQty } from '../utils/format';
-import { acumuladoPorFecha, volumenPorFecha } from '../utils/timeSeries';
+import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
+import { acumuladoPorMes, promedioVigasPorMes, volumenPorMes } from '../utils/timeSeries';
 
 type ZonaFiltro = 'todas' | Zona;
-type ChartMode = 'diario' | 'acumulado';
+type ChartMode = 'mes' | 'acumulado';
 
 export function AvanceScreen() {
   const { elementos, avances, ejecutadoDe, deleteAvance } = useProject();
   const [selected, setSelected] = useState<ElementoEstructural | null>(null);
   const [zonaFiltro, setZonaFiltro] = useState<ZonaFiltro>('todas');
-  const [chartMode, setChartMode] = useState<ChartMode>('diario');
+  const [chartMode, setChartMode] = useState<ChartMode>('mes');
 
-  const dias = useMemo(() => volumenPorFecha(avances, elementos), [avances, elementos]);
-  const acumulado = useMemo(() => acumuladoPorFecha(dias), [dias]);
+  const meses = useMemo(() => volumenPorMes(avances, elementos), [avances, elementos]);
+  const acumulado = useMemo(() => acumuladoPorMes(meses), [meses]);
+  const promedioVigas = useMemo(() => promedioVigasPorMes(meses), [meses]);
 
   const elementosZona = useMemo(
     () => (zonaFiltro === 'todas' ? elementos : elementos.filter((e) => e.zona === zonaFiltro)),
@@ -72,22 +73,37 @@ export function AvanceScreen() {
 
   return (
     <div>
-      <Header title="Avance" subtitle="Evolución del hormigonado y registro diario" />
+      <Header title="Avance" subtitle="Evolución mensual del hormigonado" />
 
       <div className="px-5 pt-4">
+        {meses.length > 0 && (
+          <div className="bg-surface rounded-2xl p-5 flex items-center gap-4 mb-3.5">
+            <div className="w-14 h-14 rounded-2xl bg-accent/15 flex items-center justify-center shrink-0">
+              <TrendingUp size={26} className="text-accent" strokeWidth={2.2} />
+            </div>
+            <div>
+              <p className="text-[13px] font-bold text-ink-2 uppercase tracking-wide">Promedio de vigas por mes</p>
+              <p className="text-[40px] font-extrabold text-ink leading-none mt-1.5">
+                {formatNumber(promedioVigas)}
+              </p>
+              <p className="text-[12.5px] text-ink-2 font-medium mt-1">vigas aéreas hormigonadas / mes</p>
+            </div>
+          </div>
+        )}
+
         <div className="flex gap-2 mb-3.5">
-          <FilterChip active={chartMode === 'diario'} onClick={() => setChartMode('diario')} label="Por día" />
+          <FilterChip active={chartMode === 'mes'} onClick={() => setChartMode('mes')} label="Por mes" />
           <FilterChip active={chartMode === 'acumulado'} onClick={() => setChartMode('acumulado')} label="Acumulado" />
         </div>
 
-        {dias.length === 0 ? (
+        {meses.length === 0 ? (
           <div className="bg-surface rounded-2xl py-8 px-5 text-center">
             <p className="text-[14.5px] text-ink-2 font-medium">
               Todavía no hay avances registrados para graficar.
             </p>
           </div>
-        ) : chartMode === 'diario' ? (
-          <VolumeBarChart data={dias} />
+        ) : chartMode === 'mes' ? (
+          <VolumeBarChart data={meses} />
         ) : (
           <CumulativeAreaChart data={acumulado} />
         )}
