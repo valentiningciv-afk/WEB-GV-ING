@@ -26,6 +26,13 @@ export function AvanceScreen() {
   const meses = useMemo(() => volumenPorMes(avances, elementos), [avances, elementos]);
   const acumulado = useMemo(() => acumuladoPorMes(meses), [meses]);
   const promedioVigas = useMemo(() => promedioVigasPorMes(meses), [meses]);
+  const metaVigas = useMemo(
+    () =>
+      elementos
+        .filter((e) => e.categoria === 'viga_aerea')
+        .reduce((sum, e) => sum + e.cantidad * e.volumen, 0),
+    [elementos],
+  );
 
   const elementosZona = useMemo(
     () => (zonaFiltro === 'todas' ? elementos : elementos.filter((e) => e.zona === zonaFiltro)),
@@ -105,7 +112,7 @@ export function AvanceScreen() {
         ) : chartMode === 'mes' ? (
           <VolumeBarChart data={meses} />
         ) : (
-          <CumulativeAreaChart data={acumulado} />
+          <CumulativeAreaChart data={acumulado} meta={metaVigas} />
         )}
       </div>
 

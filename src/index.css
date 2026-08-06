@@ -17,6 +17,14 @@
   --color-talleres: #ff375f; /* systemPink dark */
   --color-zona3: #ffd60a; /* systemYellow dark */
 
+  /* Mismos tonos por zona pero ajustados (más oscuros/saturados) para
+   * usarse como marca de dato en gráficos — los de arriba son muy claros
+   * para eso y no pasan los checks de contraste/separación CVD como
+   * paleta categórica (ver skill de dataviz). */
+  --color-aulas-chart: #1a8fd1;
+  --color-talleres-chart: #e0457a;
+  --color-zona3-chart: #a67c00;
+
   /* Superficies y texto, estilo iOS modo oscuro */
   --color-app: #000000;
   --color-surface: #1c1c1e;
@@ -52,6 +60,10 @@
   --color-aulas: #32ade6; /* systemCyan light */
   --color-talleres: #ff2d55; /* systemPink light */
   --color-zona3: #ffcc00; /* systemYellow light */
+
+  --color-aulas-chart: #0f7bb8;
+  --color-talleres-chart: #d13463;
+  --color-zona3-chart: #8a6600;
 
   --color-app: #f2f2f7;
   --color-surface: #ffffff;
