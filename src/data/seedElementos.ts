@@ -12,7 +12,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 8;
+export const SEED_VERSION = 9;
 
 interface SeedRow {
   zona: Zona;
