@@ -12,7 +12,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 11;
+export const SEED_VERSION = 12;
 
 interface SeedRow {
   zona: Zona;
@@ -74,6 +74,15 @@ const AVANCES_CARGADOS: AvanceCargado[] = [
   { zona: 'talleres', nivel: 2.2, nombre: 'VIT', cantidad: 10, fecha: '2026-08-12', precision: 'dia' },
   { zona: 'talleres', nivel: 2.2, nombre: 'VEL 1', cantidad: 10, fecha: '2026-08-14', precision: 'dia' },
   { zona: 'talleres', nivel: 2.2, nombre: 'VIT', cantidad: 10, fecha: '2026-08-14', precision: 'dia' },
+  {
+    zona: 'aulas',
+    nivel: 4.25,
+    nombre: 'VEL 2',
+    cantidad: 10,
+    fecha: '2026-08-19',
+    precision: 'dia',
+    observaciones: 'Hormigón H21',
+  },
 ];
 
 const SEED_DATA: SeedRow[] = [
