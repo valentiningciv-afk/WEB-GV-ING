@@ -166,7 +166,7 @@ export function ElementosScreen() {
                         <span className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-veil/[0.1]">
                           <Layers size={17} className="text-ink-2" strokeWidth={2.3} />
                           <span className="text-[18px] font-extrabold text-ink tracking-tight">
-                            Nivel {formatNivel(altura)}
+                            {altura ? `Nivel ${formatNivel(altura)}` : 'Sin nivel'}
                           </span>
                         </span>
                         <span className="text-[13.5px] font-semibold text-ink-3">

@@ -12,7 +12,7 @@ import type { AvanceEntry, Categoria, ElementoEstructural, UnidadMedida, Zona } 
  * descartar lo guardado en el navegador y recargar el cómputo fresco —
  * si no, quien ya la haya abierto antes nunca vería una corrección nueva.
  */
-export const SEED_VERSION = 12;
+export const SEED_VERSION = 13;
 
 interface SeedRow {
   zona: Zona;
@@ -42,6 +42,7 @@ const VOLUMEN_POR_NOMBRE: Record<string, number> = {
   'VI 7': 0.32,
   'Losa 1': 0.15,
   'Losa 2': 0.2,
+  Antepecho: 0.3,
 };
 
 /**
@@ -82,6 +83,15 @@ const AVANCES_CARGADOS: AvanceCargado[] = [
     fecha: '2026-08-19',
     precision: 'dia',
     observaciones: 'Hormigón H21',
+  },
+  {
+    zona: 'zona3',
+    nivel: 0,
+    nombre: 'Antepecho',
+    cantidad: 8,
+    fecha: '2026-08-20',
+    precision: 'dia',
+    observaciones: 'Hormigón H25',
   },
 ];
 
@@ -124,6 +134,11 @@ const SEED_DATA: SeedRow[] = [
   { zona: 'zona3', nivel: 7.5, nombre: 'VEL 2', categoria: 'viga_aerea', cantidad: 20, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 7.5, nombre: 'VI 2', categoria: 'viga_aerea', cantidad: 12, unidadMedida: 'u' },
   { zona: 'zona3', nivel: 7.5, nombre: 'VI 4', categoria: 'viga_aerea', cantidad: 10, unidadMedida: 'u' },
+
+  // Antepechos — no se clasifican por nivel (nivel: 0 = "Sin nivel")
+  { zona: 'aulas', nivel: 0, nombre: 'Antepecho', categoria: 'antepecho', cantidad: 39, unidadMedida: 'u' },
+  { zona: 'talleres', nivel: 0, nombre: 'Antepecho', categoria: 'antepecho', cantidad: 39, unidadMedida: 'u' },
+  { zona: 'zona3', nivel: 0, nombre: 'Antepecho', categoria: 'antepecho', cantidad: 46, unidadMedida: 'u' },
 ];
 
 export function createSeedElementos(): ElementoEstructural[] {

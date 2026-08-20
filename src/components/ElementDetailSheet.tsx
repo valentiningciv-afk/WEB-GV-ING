@@ -44,7 +44,7 @@ export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailS
           {zona.nombre}
         </span>
         <span className="text-[13px] font-bold px-3 py-1.5 rounded-full bg-veil/[0.08] text-ink-2">
-          Nivel {formatNivel(elemento.altura)}
+          {elemento.altura ? `Nivel ${formatNivel(elemento.altura)}` : 'Sin nivel'}
         </span>
       </div>
 
