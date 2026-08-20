@@ -15,7 +15,7 @@ import {
   type Zona,
 } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
+import { formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
 import { ZONA_STYLES } from '../utils/zonaStyles';
 
 type CategoriaFiltro = 'todas' | Categoria;
@@ -32,7 +32,7 @@ function mergeUnitTotals(map: Map<UnidadMedida, UnitTotals>, unidad: UnidadMedid
 }
 
 export function ReportesScreen() {
-  const { elementos, avances, ejecutadoDe } = useProject();
+  const { elementos, ejecutadoDe } = useProject();
   const [zonaFiltro, setZonaFiltro] = useState<ZonaFiltro>('todas');
   const [catFiltro, setCatFiltro] = useState<CategoriaFiltro>('todas');
 
@@ -63,24 +63,6 @@ export function ReportesScreen() {
     [elementos, zonaFiltro, catFiltro],
   );
 
-  const grupos = useMemo(() => {
-    const porFecha = new Map<string, { elementoId: string; cantidad: number; observaciones: string; id: string }[]>();
-    const idsFiltrados = new Set(elementosFiltrados.map((e) => e.id));
-    for (const a of avances) {
-      if (!idsFiltrados.has(a.elementoId) || a.fechaAproximada) continue;
-      const arr = porFecha.get(a.fecha) ?? [];
-      arr.push(a);
-      porFecha.set(a.fecha, arr);
-    }
-    return [...porFecha.entries()].sort((a, b) => b[0].localeCompare(a[0]));
-  }, [avances, elementosFiltrados]);
-
-  const elementoById = useMemo(() => {
-    const map = new Map<string, (typeof elementos)[number]>();
-    for (const e of elementos) map.set(e.id, e);
-    return map;
-  }, [elementos]);
-
   if (elementos.length === 0) {
     return (
       <div>
@@ -88,7 +70,7 @@ export function ReportesScreen() {
         <EmptyState
           icon={ClipboardList}
           title="Sin datos todavía"
-          description="Cuando cargues elementos y registres avances, acá vas a ver el acumulado por zona y el historial completo."
+          description="Cuando cargues elementos y registres avances, acá vas a ver el acumulado por zona y por elemento."
         />
       </div>
     );
@@ -177,66 +159,6 @@ export function ReportesScreen() {
                     <span className="text-[13px] font-semibold text-ink-2 tabular-nums shrink-0">
                       {formatQty(ejecutado, e.unidadMedida)}/{formatQty(e.cantidad, e.unidadMedida)}
                     </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="px-5 pb-8">
-        <p className="text-[15px] font-extrabold text-ink uppercase tracking-wide mb-3 px-1">
-          Historial cronológico
-        </p>
-        {grupos.length === 0 ? (
-          <p className="text-[14.5px] text-ink-2 font-medium px-1">Sin registros de avance todavía.</p>
-        ) : (
-          <div className="space-y-3.5">
-            {grupos.map(([fecha, entradas]) => {
-              const totalesPorUnidad = new Map<UnidadMedida, number>();
-              for (const a of entradas) {
-                const el = elementoById.get(a.elementoId);
-                if (!el) continue;
-                totalesPorUnidad.set(
-                  el.unidadMedida,
-                  (totalesPorUnidad.get(el.unidadMedida) ?? 0) + a.cantidad,
-                );
-              }
-              return (
-                <div key={fecha} className="bg-surface rounded-2xl overflow-hidden">
-                  <div className="px-3.5 py-3 bg-veil/[0.04] flex items-center justify-between gap-2">
-                    <p className="text-[14.5px] font-bold text-ink">{formatDate(fecha)}</p>
-                    <p className="text-[13px] text-ink-2 font-semibold tabular-nums">
-                      {[...totalesPorUnidad.entries()]
-                        .map(([u, total]) => `+${formatNumber(total)} ${UNIDAD_LABELS[u].corta}`)
-                        .join(' · ')}
-                    </p>
-                  </div>
-                  <div className="divide-y divide-veil/[0.07]">
-                    {entradas.map((a) => {
-                      const el = elementoById.get(a.elementoId);
-                      if (!el) return null;
-                      const style = CATEGORY_STYLES[el.categoria];
-                      const zona = getZonaInfo(el.zona);
-                      return (
-                        <div key={a.id} className="px-3.5 py-3 flex items-center gap-2.5">
-                          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${style.bar}`} />
-                          <p className="text-[14.5px] text-ink font-medium flex-1 truncate">
-                            {el.nombre}{' '}
-                            <span className="text-ink-2">
-                              · {formatNivel(el.altura)} · {zona.nombreCorto}
-                            </span>
-                            {a.observaciones && (
-                              <span className="text-ink-2"> · {a.observaciones}</span>
-                            )}
-                          </p>
-                          <span className="text-[14px] font-bold text-ink tabular-nums shrink-0">
-                            +{formatQty(a.cantidad, el.unidadMedida)}
-                          </span>
-                        </div>
-                      );
-                    })}
                   </div>
                 </div>
               );

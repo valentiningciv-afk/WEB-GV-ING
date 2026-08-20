@@ -1,4 +1,4 @@
-import { CalendarCheck, Trash2, TrendingUp } from 'lucide-react';
+import { CalendarCheck, TrendingUp } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { CumulativeAreaChart } from '../components/charts/CumulativeAreaChart';
 import { VolumeBarChart } from '../components/charts/VolumeBarChart';
@@ -9,16 +9,16 @@ import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressBar } from '../components/ui/ProgressBar';
 import { useProject } from '../store/ProjectContext';
 import type { ElementoEstructural, Zona } from '../types';
-import { getCategoriaInfo, getZonaInfo, ZONAS } from '../types';
+import { getZonaInfo, ZONAS } from '../types';
 import { CATEGORY_STYLES } from '../utils/categoryStyles';
-import { formatDate, formatNivel, formatNumber, formatQty } from '../utils/format';
+import { formatNivel, formatNumber, formatQty } from '../utils/format';
 import { acumuladoPorMes, promedioVigasPorMes, volumenPorMes } from '../utils/timeSeries';
 
 type ZonaFiltro = 'todas' | Zona;
 type ChartMode = 'mes' | 'acumulado';
 
 export function AvanceScreen() {
-  const { elementos, avances, ejecutadoDe, deleteAvance } = useProject();
+  const { elementos, avances, ejecutadoDe } = useProject();
   const [selected, setSelected] = useState<ElementoEstructural | null>(null);
   const [zonaFiltro, setZonaFiltro] = useState<ZonaFiltro>('todas');
   const [chartMode, setChartMode] = useState<ChartMode>('mes');
@@ -47,23 +47,6 @@ export function AvanceScreen() {
     () => elementosZona.filter((e) => ejecutadoDe(e.id) >= e.cantidad),
     [elementosZona, ejecutadoDe],
   );
-
-  const idsZona = useMemo(() => new Set(elementosZona.map((e) => e.id)), [elementosZona]);
-
-  const reciente = useMemo(
-    () =>
-      [...avances]
-        .filter((a) => idsZona.has(a.elementoId) && !a.fechaAproximada)
-        .sort((a, b) => b.fecha.localeCompare(a.fecha) || b.creadoEn.localeCompare(a.creadoEn))
-        .slice(0, 15),
-    [avances, idsZona],
-  );
-
-  const elementoById = useMemo(() => {
-    const map = new Map<string, ElementoEstructural>();
-    for (const e of elementos) map.set(e.id, e);
-    return map;
-  }, [elementos]);
 
   if (elementos.length === 0) {
     return (
@@ -177,50 +160,6 @@ export function AvanceScreen() {
         {pendientes.length === 0 && completos.length === 0 && (
           <p className="text-[14.5px] text-ink-2 font-medium px-1">No hay elementos cargados en esta zona.</p>
         )}
-
-        <div>
-          <p className="text-[14.5px] font-bold text-ink-2 uppercase tracking-wide mb-2.5 px-1">
-            Actividad reciente
-          </p>
-          {reciente.length === 0 ? (
-            <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registraron avances.</p>
-          ) : (
-            <div className="bg-surface rounded-2xl divide-y divide-veil/[0.07] overflow-hidden">
-              {reciente.map((a) => {
-                const el = elementoById.get(a.elementoId);
-                if (!el) return null;
-                const cat = getCategoriaInfo(el.categoria);
-                const zona = getZonaInfo(el.zona);
-                const style = CATEGORY_STYLES[el.categoria];
-                return (
-                  <div key={a.id} className="px-3.5 py-3.5 flex items-center gap-3">
-                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${style.bar}`} />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[15.5px] font-semibold text-ink truncate">
-                        {el.nombre}{' '}
-                        <span className="text-ink-2 font-normal">
-                          · {cat.nombreSingular} · {formatNivel(el.altura)}
-                          {zonaFiltro === 'todas' ? ` · ${zona.nombreCorto}` : ''}
-                        </span>
-                      </p>
-                      <p className="text-[13.5px] text-ink-2 font-medium mt-0.5">
-                        +{formatQty(a.cantidad, el.unidadMedida)} · {formatDate(a.fecha)}
-                        {a.observaciones ? ` · ${a.observaciones}` : ''}
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => deleteAvance(a.id)}
-                      className="w-8 h-8 rounded-full flex items-center justify-center text-ink-3 active:bg-veil/[0.06] shrink-0"
-                      aria-label="Eliminar registro"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
       </div>
 
       <RegisterAvanceSheet elemento={selected} onClose={() => setSelected(null)} />

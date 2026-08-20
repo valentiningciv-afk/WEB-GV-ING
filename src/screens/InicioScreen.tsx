@@ -2,6 +2,7 @@ import { ArrowRight, HardHat } from 'lucide-react';
 import { useMemo } from 'react';
 import type { Tab } from '../App';
 import { Header } from '../components/Header';
+import { HistorialActividad } from '../components/HistorialActividad';
 import { ThemeToggle } from '../components/ThemeToggle';
 import { EmptyState } from '../components/ui/EmptyState';
 import { ProgressRing } from '../components/ui/ProgressRing';
@@ -46,7 +47,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
   const { elementos, avances, ejecutadoDe } = useProject();
 
   const resumen = useMemo(() => {
-    const porCategoria = CATEGORIAS.map((cat) => {
+    const categorias = CATEGORIAS.map((cat) => {
       const items = elementos.filter((e) => e.categoria === cat.id);
       if (items.length === 0) return null;
       const porUnidad = new Map<UnidadMedida, UnitTotals>();
@@ -56,6 +57,11 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
       const percent = percentDeItems(items, ejecutadoDe, porUnidad);
       return { cat, percent, porUnidad };
     }).filter((c): c is NonNullable<typeof c> => c !== null);
+
+    // Vigas y losas son los indicadores principales; el resto (antepechos,
+    // etc.) se muestra con menos protagonismo debajo.
+    const porCategoria = categorias.filter((c) => c.cat.id === 'viga_aerea' || c.cat.id === 'losa');
+    const secundarias = categorias.filter((c) => c.cat.id !== 'viga_aerea' && c.cat.id !== 'losa');
 
     const porZona = ZONAS.map((zona) => {
       const items = elementos.filter((e) => e.zona === zona.id);
@@ -68,7 +74,7 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
       return { zona, percent, porUnidad, items: items.length };
     }).filter((z): z is NonNullable<typeof z> => z !== null);
 
-    return { porCategoria, porZona };
+    return { porCategoria, secundarias, porZona };
   }, [elementos, ejecutadoDe]);
 
   const ultimoAvance = useMemo(
@@ -131,6 +137,32 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
           })}
         </div>
 
+        {resumen.secundarias.length > 0 && (
+          <div className="flex flex-col gap-2 mt-3">
+            {resumen.secundarias.map(({ cat, percent, porUnidad }) => {
+              const style = CATEGORY_STYLES[cat.id];
+              return (
+                <div
+                  key={cat.id}
+                  className={`rounded-2xl px-4 py-3 flex items-center gap-3 ${style.bg50}`}
+                >
+                  <ProgressRing percent={percent} size={40} strokeWidth={5} colorClass={style.ring}>
+                    <p className="text-[11px] font-extrabold text-ink leading-none tabular-nums">
+                      {formatPercent(percent)}
+                    </p>
+                  </ProgressRing>
+                  <p className="text-[14px] font-bold text-ink flex-1">{cat.nombre}</p>
+                  <p className="text-[12.5px] text-ink-2 tabular-nums font-medium">
+                    {[...porUnidad.entries()]
+                      .map(([u, t]) => `${formatNumber(t.ejecutado)}/${formatNumber(t.total)} ${UNIDAD_LABELS[u].corta}`)
+                      .join(' · ')}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {ultimoAvance && (
           <p className="text-[13px] text-ink-2 text-center mt-4 font-medium">
             Último avance registrado el {formatDate(ultimoAvance.fecha)}
@@ -173,6 +205,13 @@ export function InicioScreen({ onNavigate }: InicioScreenProps) {
             );
           })}
         </div>
+      </div>
+
+      <div className="px-5 pt-2 pb-4">
+        <p className="text-[15px] font-extrabold text-ink uppercase tracking-wide mb-3 px-1">
+          Historial de avances
+        </p>
+        <HistorialActividad />
       </div>
 
       <div className="px-5 pb-6">
