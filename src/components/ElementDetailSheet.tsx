@@ -1,0 +1,137 @@
+import { Pencil, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { useProject } from '../store/ProjectContext';
+import type { ElementoEstructural } from '../types';
+import { getCategoriaInfo, getZonaInfo } from '../types';
+import { CATEGORY_STYLES } from '../utils/categoryStyles';
+import { formatDate, formatNivel, formatNumber, formatPercent, formatQty } from '../utils/format';
+import { ZONA_STYLES } from '../utils/zonaStyles';
+import { PhotoThumb } from './PhotoPicker';
+import { ProgressBar } from './ui/ProgressBar';
+import { Sheet } from './ui/Sheet';
+
+interface ElementDetailSheetProps {
+  elemento: ElementoEstructural | null;
+  onClose: () => void;
+  onEdit: (e: ElementoEstructural) => void;
+}
+
+export function ElementDetailSheet({ elemento, onClose, onEdit }: ElementDetailSheetProps) {
+  const { avances, deleteElemento, ejecutadoDe } = useProject();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+
+  if (!elemento) return null;
+  const style = CATEGORY_STYLES[elemento.categoria];
+  const cat = getCategoriaInfo(elemento.categoria);
+  const zona = getZonaInfo(elemento.zona);
+  const ejecutado = ejecutadoDe(elemento.id);
+  const percent = elemento.cantidad > 0 ? (ejecutado / elemento.cantidad) * 100 : 0;
+  const historial = avances
+    .filter((a) => a.elementoId === elemento.id)
+    .sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+  const zstyle = ZONA_STYLES[elemento.zona];
+
+  return (
+    <Sheet open={!!elemento} onClose={onClose} title={elemento.nombre}>
+      <PhotoThumb src={elemento.foto} sizeClass="w-full h-44 rounded-2xl" />
+
+      <div className="mt-4 flex items-center gap-2 flex-wrap">
+        <span className={`text-[13px] font-bold px-3 py-1.5 rounded-full ${style.chip}`}>
+          {cat.nombre}
+        </span>
+        <span className={`text-[13px] font-bold px-3 py-1.5 rounded-full ${zstyle.bg} ${zstyle.text}`}>
+          {zona.nombre}
+        </span>
+        <span className="text-[13px] font-bold px-3 py-1.5 rounded-full bg-veil/[0.08] text-ink-2">
+          {elemento.altura ? `Nivel ${formatNivel(elemento.altura)}` : 'Sin nivel'}
+        </span>
+      </div>
+
+      <div className="mt-4 bg-surface rounded-2xl p-4">
+        <div className="flex items-center justify-between mb-2.5">
+          <p className="text-[14.5px] font-semibold text-ink-2">Avance acumulado</p>
+          <p className="text-[17px] font-extrabold text-ink tabular-nums">
+            {formatQty(ejecutado, elemento.unidadMedida)}/{formatQty(elemento.cantidad, elemento.unidadMedida)}
+            <span className="text-ink-2 font-semibold"> · {formatPercent(percent)}</span>
+          </p>
+        </div>
+        <ProgressBar percent={percent} colorClass={style.bar} heightClass="h-3" />
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="bg-surface rounded-2xl p-4">
+          <p className="text-[13px] text-ink-2 font-medium mb-1">Volumen unitario</p>
+          <p className="text-[18px] font-bold text-ink">
+            {formatNumber(elemento.volumen)} m³
+          </p>
+        </div>
+        <div className="bg-surface rounded-2xl p-4">
+          <p className="text-[13px] text-ink-2 font-medium mb-1">Nivel</p>
+          <p className="text-[18px] font-bold text-ink">
+            {formatNivel(elemento.altura)}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-3 bg-surface rounded-2xl p-4">
+        <p className="text-[13px] text-ink-2 font-medium mb-1.5">Material de encofrado</p>
+        <p className="text-[16px] text-ink font-medium leading-snug">
+          {elemento.materialEncofrado || 'Sin especificar'}
+        </p>
+      </div>
+
+      <div className="mt-5">
+        <p className="text-[15px] font-extrabold text-ink-2 mb-2.5 px-1">
+          Historial de avance ({historial.length})
+        </p>
+        {historial.length === 0 ? (
+          <p className="text-[14.5px] text-ink-2 font-medium px-1">Todavía no se registró avance.</p>
+        ) : (
+          <div className="bg-surface rounded-2xl divide-y divide-veil/[0.07] overflow-hidden">
+            {historial.map((a) => (
+              <div key={a.id} className="px-3.5 py-3 flex items-center justify-between gap-2">
+                <div>
+                  <p className="text-[15.5px] font-bold text-ink">
+                    +{formatQty(a.cantidad, elemento.unidadMedida)}
+                  </p>
+                  {a.observaciones && (
+                    <p className="text-[13.5px] text-ink-2 font-medium">{a.observaciones}</p>
+                  )}
+                </div>
+                <span className="text-[13.5px] text-ink-2 font-medium shrink-0">{formatDate(a.fecha)}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="mt-6 flex gap-3 pb-4">
+        <button
+          onClick={() => onEdit(elemento)}
+          className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-surface-2 text-ink text-[15.5px] font-bold active:bg-surface-3"
+        >
+          <Pencil size={17} /> Editar
+        </button>
+        {confirmDelete ? (
+          <button
+            onClick={() => {
+              deleteElemento(elemento.id);
+              onClose();
+            }}
+            className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-red-500 text-white text-[15.5px] font-bold active:bg-red-600"
+          >
+            Confirmar
+          </button>
+        ) : (
+          <button
+            onClick={() => setConfirmDelete(true)}
+            className="flex-1 flex items-center justify-center gap-1.5 py-3.5 rounded-xl bg-red-500/15 text-red-400 text-[15.5px] font-bold active:bg-red-500/25"
+          >
+            <Trash2 size={17} /> Eliminar
+          </button>
+        )}
+      </div>
+    </Sheet>
+  );
+}
